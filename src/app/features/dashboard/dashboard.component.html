@@ -1,0 +1,257 @@
+<!-- Panel de Cuenta de Cliente (Paleta Knect #1A365D / #00A3FF y Font Awesome) -->
+<div class="bo-layout">
+  <aside class="bo-sidebar" aria-label="Menú Mi Cuenta Cliente">
+    <div class="bo-sidebar-brand">
+      <div class="bo-brand-row">
+        <div class="client-avatar-circle" aria-hidden="true">
+          {{ (authService.user()?.name || 'C')[0] }}
+        </div>
+        <div>
+          <span class="bo-brand-title">Mi Cuenta</span>
+          <span class="bo-brand-sub">Perfil de Cliente</span>
+        </div>
+      </div>
+    </div>
+
+    <nav class="bo-menu">
+      <button
+        type="button"
+        class="bo-menu-item"
+        [class.active]="activeSection() === 'PROFILE'"
+        (click)="activeSection.set('PROFILE')"
+      >
+        <i class="fa-solid fa-user" aria-hidden="true"></i>
+        <span>Mis Datos Personales</span>
+      </button>
+
+      <button
+        type="button"
+        class="bo-menu-item"
+        [class.active]="activeSection() === 'RATE_RESTAURANTS'"
+        (click)="activeSection.set('RATE_RESTAURANTS')"
+      >
+        <i class="fa-solid fa-star" aria-hidden="true"></i>
+        <span>Calificar Restaurantes</span>
+      </button>
+
+      @if (authService.isSuperAdmin()) {
+        <a routerLink="/super-admin" class="bo-menu-item">
+          <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
+          <span>Ir a BackOffice SuperAdmin</span>
+        </a>
+      }
+      @if (authService.isBusinessAdmin()) {
+        <a routerLink="/brand-admin" class="bo-menu-item">
+          <i class="fa-solid fa-building-user" aria-hidden="true"></i>
+          <span>Ir a BackOffice Mi Local</span>
+        </a>
+      }
+    </nav>
+
+    <div class="bo-sidebar-footer">
+      <div class="bo-user-box">
+        <div class="bo-user-meta">
+          <strong>{{ authService.user()?.name }} {{ authService.user()?.lastName }}</strong>
+          <small>{{ authService.user()?.email }}</small>
+        </div>
+      </div>
+      <div class="bo-footer-actions">
+        <a routerLink="/businesses" class="bo-footer-link">
+          <i class="fa-solid fa-store" aria-hidden="true"></i> Explorar Restaurantes
+        </a>
+        <button type="button" class="bo-logout-btn" (click)="logout()">
+          <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Cerrar sesión
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="bo-main">
+    <header class="bo-header-container">
+      <div class="bo-header-top">
+        <h1 class="bo-title">
+          @if (activeSection() === 'PROFILE') {
+            <i class="fa-solid fa-user-gear" aria-hidden="true"></i>
+            Gestión de Mi Información Personal
+          } @else {
+            <i class="fa-solid fa-star" aria-hidden="true"></i>
+            Calificar Restaurantes y Locales
+          }
+        </h1>
+        <a routerLink="/businesses" class="bo-btn-new">
+          <i class="fa-solid fa-compass" aria-hidden="true"></i> Explorar Todo el Directorio
+          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </a>
+      </div>
+      <div class="bo-breadcrumb">
+        <span><i class="fa-solid fa-user" aria-hidden="true"></i> MI CUENTA</span>
+        <span class="bo-crumb-sep"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></span>
+        <span class="bo-crumb-current">
+          {{ activeSection() === 'PROFILE' ? 'MIS DATOS PERSONALES' : 'CALIFICAR RESTAURANTES' }}
+        </span>
+      </div>
+    </header>
+
+    @if (activeSection() === 'PROFILE') {
+      <section class="bo-section-card">
+        <h2 class="bo-section-title">
+          <span><i class="fa-solid fa-id-card" aria-hidden="true"></i> DATOS PERSONALES Y CONTRASEÑA DE TU CUENTA</span>
+        </h2>
+        <p class="bo-section-desc">
+          Actualiza tu nombre, correo electrónico, teléfono de contacto y contraseña de acceso.
+        </p>
+
+        @if (savedMsg()) {
+          <div class="alert-banner alert-success" style="margin-bottom: 1rem" role="status">
+            <i class="fa-solid fa-circle-check" aria-hidden="true"></i> {{ savedMsg() }}
+          </div>
+        }
+        @if (errorMsg()) {
+          <div class="alert-banner alert-error" style="margin-bottom: 1rem" role="alert">
+            <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> {{ errorMsg() }}
+          </div>
+        }
+
+        <form (ngSubmit)="saveProfile()">
+          <div class="bo-form-grid-2">
+            <div>
+              <label class="bo-field-label" for="prof-name">
+                <i class="fa-solid fa-user" aria-hidden="true"></i> {{ i18n.t('auth.name') }} *
+              </label>
+              <input
+                id="prof-name"
+                type="text"
+                class="bo-input"
+                [(ngModel)]="name"
+                name="name"
+                required
+                autocomplete="given-name"
+              />
+            </div>
+            <div>
+              <label class="bo-field-label" for="prof-lastname">
+                <i class="fa-solid fa-user-tag" aria-hidden="true"></i> {{ i18n.t('auth.lastName') }}
+              </label>
+              <input
+                id="prof-lastname"
+                type="text"
+                class="bo-input"
+                [(ngModel)]="lastName"
+                name="lastName"
+                autocomplete="family-name"
+              />
+            </div>
+          </div>
+
+          <div class="bo-form-grid-2">
+            <div>
+              <label class="bo-field-label" for="prof-email">
+                <i class="fa-solid fa-envelope" aria-hidden="true"></i> {{ i18n.t('auth.email') }} *
+              </label>
+              <input
+                id="prof-email"
+                type="email"
+                class="bo-input"
+                [(ngModel)]="email"
+                name="email"
+                required
+                autocomplete="email"
+              />
+            </div>
+            <div>
+              <label class="bo-field-label" for="prof-phone">
+                <i class="fa-solid fa-phone" aria-hidden="true"></i> {{ i18n.t('auth.phone') }}
+              </label>
+              <input
+                id="prof-phone"
+                type="tel"
+                class="bo-input"
+                [(ngModel)]="phone"
+                name="phone"
+                autocomplete="tel"
+              />
+            </div>
+          </div>
+
+          <div style="margin-bottom: 1rem">
+            <label class="bo-field-label" for="prof-password">
+              <i class="fa-solid fa-lock" aria-hidden="true"></i>
+              {{
+                i18n.lang() === 'es'
+                  ? 'Nueva contraseña (dejar en blanco para conservar la actual)'
+                  : 'New password (leave blank to keep current)'
+              }}
+            </label>
+            <div class="password-field">
+              <input
+                id="prof-password"
+                [type]="showPassword() ? 'text' : 'password'"
+                class="bo-input"
+                [(ngModel)]="password"
+                name="password"
+                autocomplete="new-password"
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                class="password-toggle"
+                (click)="togglePassword()"
+                [attr.aria-label]="showPassword() ? i18n.t('auth.hidePassword') : i18n.t('auth.showPassword')"
+              >
+                <i
+                  class="fa-solid"
+                  [class.fa-eye-slash]="showPassword()"
+                  [class.fa-eye]="!showPassword()"
+                  aria-hidden="true"
+                ></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="bo-form-footer">
+            <button type="submit" class="bo-btn-save" [disabled]="isSaving()">
+              <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>
+              {{ i18n.lang() === 'es' ? 'Guardar Mis Datos Personales' : 'Save Personal Info' }}
+            </button>
+          </div>
+        </form>
+      </section>
+    }
+
+    @if (activeSection() === 'RATE_RESTAURANTS') {
+      <section class="bo-section-card">
+        <h2 class="bo-section-title">
+          <span><i class="fa-solid fa-star" aria-hidden="true"></i> CALIFICA Y DEJA TU OPINIÓN EN LOS RESTAURANTES</span>
+        </h2>
+        <p class="bo-section-desc">
+          Como cliente registrado puedes calificar de 1 a 5 estrellas y comentar tu experiencia en cualquier restaurante del directorio.
+        </p>
+
+        <div class="rate-restaurants-grid">
+          @for (biz of restaurantsToRate(); track biz.id) {
+            <article class="rate-biz-card">
+              <img
+                [src]="biz.bannerUrl || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=600&q=80'"
+                alt=""
+                class="rate-biz-img"
+              />
+              <div class="rate-biz-body">
+                <span class="rate-biz-cat">
+                  {{ biz.category }} &bull; <i class="fa-solid fa-location-dot" aria-hidden="true"></i> {{ biz.neighborhood }}
+                </span>
+                <h3>{{ biz.name }}</h3>
+                <div class="rate-biz-score">
+                  <span><i class="fa-solid fa-star" aria-hidden="true"></i> {{ biz.ratingAvg || '5.0' }}</span>
+                  <small>({{ biz.reviewCount || 1 }} calificaciones)</small>
+                </div>
+                <a [routerLink]="['/businesses', biz.id]" class="bo-btn-save rate-cta-link">
+                  <i class="fa-solid fa-star" aria-hidden="true"></i> Calificar este Restaurante
+                </a>
+              </div>
+            </article>
+          }
+        </div>
+      </section>
+    }
+  </div>
+</div>

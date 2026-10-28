@@ -1,0 +1,188 @@
+<!-- RF-02: Hero Principal Minimalista 2026 (Editorial + Floating Omnibox) -->
+<section class="hero-section">
+  <div class="hero-ambient-glow" aria-hidden="true"></div>
+  <div class="knect-container hero-inner">
+    <div class="hero-text-col">
+      <p class="hero-pill">
+        <span class="hero-pill-dot" aria-hidden="true"></span>
+        <span>{{ i18n.t('home.heroPill') }}</span>
+      </p>
+      <h1>
+        {{ (i18n.lang() === 'es' ? cms()?.heroTitleEs : cms()?.heroTitleEn) || i18n.t('home.heroTitleFallback') }}
+      </h1>
+      <p class="hero-subtitle">
+        {{ (i18n.lang() === 'es' ? cms()?.heroSubtitleEs : cms()?.heroSubtitleEn) || i18n.t('home.heroSubtitleFallback') }}
+      </p>
+
+      <div class="unal-glass-search-box">
+        <form class="hero-search-bar" role="search" (ngSubmit)="onQuickSearch()">
+          <div class="search-input-wrap">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <label class="sr-only" for="hero-search">{{ i18n.t('home.searchLabel') }}</label>
+            <input
+              id="hero-search"
+              type="search"
+              class="search-input"
+              [(ngModel)]="quickSearch"
+              name="quickSearch"
+              autocomplete="off"
+              enterkeyhint="search"
+              [placeholder]="i18n.t('home.searchPlaceholder')"
+            />
+          </div>
+
+          <div class="search-select-wrap">
+            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+            <label class="sr-only" for="hero-neighborhood">{{ i18n.t('home.neighborhoodLabel') }}</label>
+            <select id="hero-neighborhood" class="search-select" [(ngModel)]="quickNeighborhood" name="quickNeighborhood">
+              <option value="">{{ i18n.t('dir.allNeighborhoods') }}</option>
+              @for (nb of neighborhoods(); track nb) {
+                <option [value]="nb">{{ nb }}</option>
+              }
+            </select>
+          </div>
+
+          <button type="submit" class="unal-hero-search-btn">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <span>{{ i18n.t('home.searchBtn') }}</span>
+          </button>
+        </form>
+
+        <!-- Filtros rápidos por Categoría (Pills 2026) -->
+        <ul class="category-chips" [attr.aria-label]="i18n.t('home.categoriesLabel')">
+          @for (cat of categories(); track cat.establishmentTypeId) {
+            <li>
+              <a
+                class="category-chip"
+                routerLink="/businesses"
+                [queryParams]="{ categoryId: cat.establishmentTypeId }"
+              >
+                <i class="fa-solid fa-compass" aria-hidden="true"></i>
+                <span>{{ i18n.lang() === 'es' ? cat.name : (cat.nameEn || cat.name) }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <div class="hero-bottom-meta">
+        <a routerLink="/businesses" class="hero-link">
+          <span>{{ i18n.lang() === 'es' ? (cms()?.heroCtaTextEs || i18n.t('home.viewAllDirectory')) : (cms()?.heroCtaTextEn || i18n.t('home.viewAllDirectory')) }}</span>
+          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RF-02: Sección Locales y Restaurantes Destacados -->
+<section class="section-block" aria-labelledby="featured-heading">
+  <div class="knect-container">
+    <div class="section-header">
+      <app-knect-section-title
+        [tag]="i18n.t('home.featuredBadge')"
+        [title]="(i18n.lang() === 'es' ? cms()?.featuredTitleEs : cms()?.featuredTitleEn) || i18n.t('home.featuredBadge')"
+      />
+      <a routerLink="/businesses" class="btn-knect btn-knect-outline">
+        <span>{{ i18n.t('home.viewAllDirectory') }}</span>
+        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+      </a>
+    </div>
+
+    @if (featuredLoading()) {
+      <div class="featured-grid" aria-busy="true">
+        <span class="sr-only" role="status">{{ i18n.t('dir.loading') }}</span>
+        @for (i of skeletons; track i) {
+          <div class="skeleton skeleton-card" aria-hidden="true"></div>
+        }
+      </div>
+    } @else if (featuredBusinesses().length === 0) {
+      <p class="empty-hint">{{ i18n.t('home.featuredEmpty') }}</p>
+    } @else {
+      <div class="featured-grid">
+        @for (biz of featuredBusinesses(); track biz.id) {
+          <app-business-card [business]="biz" />
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- Sección Bento Grid 2026: "¿Qué hacemos en Knect?" -->
+<section class="unal-what-we-do">
+  <div class="knect-container what-we-do-grid">
+    <div class="what-we-do-media">
+      <img
+        [src]="cms()?.heroBannerUrl || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1000&q=80'"
+        alt="Ecosistema de Restaurantes y Locales Knect"
+        class="unal-leaf-image"
+        loading="lazy"
+      />
+    </div>
+    <div class="what-we-do-content">
+      <span class="what-we-do-tag">
+        <span class="tag-dot" aria-hidden="true"></span>
+        {{ i18n.lang() === 'es' ? 'Ecosistema Gastronómico y Comercial' : 'Dining & Commercial Ecosystem' }}
+      </span>
+      <h2 class="unal-section-title">
+        {{ i18n.lang() === 'es' ? '¿Qué hacemos en Knect?' : 'What do we do at Knect?' }}
+      </h2>
+      <p>
+        {{
+          i18n.lang() === 'es'
+            ? 'Integramos en una plataforma minimalista y veloz a los mejores restaurantes, cafés, gastrobares y cocinas ocultas de la ciudad, permitiendo consultar sedes georreferenciadas, horarios verificados, contacto directo por WhatsApp y calificaciones reales.'
+            : 'We integrate the best restaurants, cafés, gastrobars, and dark kitchens in the city into a fast, minimalist platform, allowing users to check georeferenced branches, verified hours, direct WhatsApp contact, and real ratings.'
+        }}
+      </p>
+      <div class="what-we-do-pillars">
+        <div class="pillar-item">
+          <div class="pillar-icon" aria-hidden="true">
+            <i class="fa-solid fa-utensils"></i>
+          </div>
+          <strong>
+            {{ i18n.lang() === 'es' ? 'Para Clientes y Comensales' : 'For Diners & Clients' }}
+          </strong>
+          <span>{{ i18n.lang() === 'es' ? 'Busca por barrio o modalidad, contacta vía WhatsApp y califica tus restaurantes favoritos.' : 'Search by neighborhood or mode, contact via WhatsApp, and rate your favorite restaurants.' }}</span>
+        </div>
+        <div class="pillar-item">
+          <div class="pillar-icon" aria-hidden="true">
+            <i class="fa-solid fa-chart-line"></i>
+          </div>
+          <strong>
+            {{ i18n.lang() === 'es' ? 'Para Administradores de Locales' : 'For Restaurant Admins' }}
+          </strong>
+          <span>{{ i18n.lang() === 'es' ? 'Monitorea el Dashboard de tu restaurante, gestiona tus sedes y responde reseñas en tiempo real.' : 'Monitor your restaurant Dashboard, manage your branches, and reply to reviews in real time.' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RF-02 & RF-05: Notas de Interés / Noticias -->
+<section class="section-block section-alt">
+  <div class="knect-container">
+    <div class="section-header">
+      <app-knect-section-title
+        [tag]="i18n.lang() === 'es' ? 'Actualidad y Tendencias' : 'News & Trends'"
+        [title]="(i18n.lang() === 'es' ? cms()?.newsTitleEs : cms()?.newsTitleEn) || 'Notas de Interés'"
+      />
+      <a routerLink="/blog" class="btn-knect btn-knect-outline">
+        <span>{{ i18n.t('home.viewAllNews') }}</span>
+        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+      </a>
+    </div>
+
+    <div class="news-grid">
+      @for (post of latestPosts(); track post.slug) {
+        <app-news-card [post]="post" />
+      }
+    </div>
+  </div>
+</section>
+
+<!-- RF-03: Organismo Formulario de Contacto General -->
+<section class="section-block" id="contacto">
+  <div class="knect-container">
+    <app-contact-form-section [cms]="cms()" />
+  </div>
+</section>

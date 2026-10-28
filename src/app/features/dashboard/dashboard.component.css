@@ -1,0 +1,232 @@
+.bo-sidebar-brand {
+  padding: 0 0.35rem 1.25rem;
+  border-bottom: 1px solid var(--knect-border);
+  margin-bottom: 1rem;
+}
+
+.bo-brand-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.client-avatar-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--knect-primary);
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bo-brand-title {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--knect-primary);
+}
+
+.bo-brand-sub {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--knect-accent-hover);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.bo-user-box {
+  margin-bottom: 0.85rem;
+  padding: 0.6rem 0.7rem;
+  background: var(--knect-bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--knect-border);
+}
+
+.bo-user-meta {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.bo-user-meta strong {
+  font-size: 0.8rem;
+  color: var(--knect-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bo-user-meta small {
+  font-size: 0.7rem;
+  color: var(--knect-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bo-footer-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.bo-footer-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--knect-primary);
+  background: var(--knect-bg-card);
+  border: 1px solid var(--knect-border);
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.bo-footer-link i {
+  color: var(--knect-accent);
+}
+
+.bo-footer-link:hover {
+  border-color: var(--knect-accent);
+  color: var(--knect-accent);
+  background: #FFFFFF;
+}
+
+.bo-logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  background: transparent;
+  color: var(--knect-text-muted);
+  border: 1px solid var(--knect-border);
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.bo-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.08);
+  color: var(--knect-error);
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+.bo-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  width: 100%;
+}
+
+.bo-section-desc {
+  font-size: 0.88rem;
+  color: var(--knect-text-muted);
+  margin: 0 0 1.25rem;
+}
+
+.bo-form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.bo-form-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--knect-border);
+}
+
+/* Grid Minimalista 2026 para Calificar Restaurantes */
+.rate-restaurants-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.rate-biz-card {
+  background: #FFFFFF;
+  border: 1px solid var(--knect-border);
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.rate-biz-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--knect-shadow-lg);
+  border-color: rgba(0, 163, 255, 0.38);
+}
+
+.rate-biz-img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.rate-biz-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  flex: 1;
+}
+
+.rate-biz-cat {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--knect-accent-hover);
+}
+
+.rate-biz-body h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--knect-primary);
+  margin: 0;
+}
+
+.rate-biz-score {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  color: var(--knect-warning);
+  font-weight: 700;
+  margin-bottom: 0.45rem;
+}
+
+.rate-biz-score small {
+  color: var(--knect-text-muted);
+  font-weight: 500;
+}
+
+.rate-cta-link {
+  margin-top: auto;
+  justify-content: center;
+  text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  .bo-form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}

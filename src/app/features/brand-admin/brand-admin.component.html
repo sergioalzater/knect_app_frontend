@@ -1,0 +1,721 @@
+<!-- Layout BackOffice del Administrador del Local (Paleta Knect #1A365D / #00A3FF y Font Awesome) -->
+<div class="bo-layout">
+  <!-- Barra Lateral Izquierda -->
+  <aside class="bo-sidebar" aria-label="Menú BackOffice Administrador de Local">
+    <div class="bo-sidebar-brand">
+      <div class="bo-brand-row">
+        <img
+          [src]="business()?.logoUrl || '/logo-knect.svg'"
+          alt="Logo Local"
+          class="bo-brand-logo"
+          width="42"
+          height="42"
+        />
+        <div>
+          <span class="bo-brand-title">BackOffice</span>
+          <span class="bo-brand-sub">Admin del Local</span>
+        </div>
+      </div>
+
+      @if (authService.isSuperAdmin() && allBusinesses().length > 0) {
+        <div class="bo-superadmin-switcher">
+          <label for="bo-sa-switch">
+            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Modo SuperAdmin (Cambiar Local):
+          </label>
+          <select
+            id="bo-sa-switch"
+            class="bo-input"
+            [ngModel]="selectedBusinessId"
+            (ngModelChange)="onSelectBusiness($event)"
+          >
+            @for (b of allBusinesses(); track b.id) {
+              <option [ngValue]="b.id">
+                {{ b.name }} ({{ b.neighborhood }})
+              </option>
+            }
+          </select>
+          <a routerLink="/super-admin" class="bo-back-sa-link">
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Volver a BackOffice Global
+          </a>
+        </div>
+      }
+    </div>
+
+    <nav class="bo-menu">
+      <button
+        type="button"
+        class="bo-menu-item"
+        [class.active]="activeTab() === 'ANALYTICS'"
+        (click)="activeTab.set('ANALYTICS')"
+      >
+        <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+        <span>Dashboard de Mi Local</span>
+      </button>
+
+      <button
+        type="button"
+        class="bo-menu-item"
+        [class.active]="activeTab() === 'BRAND'"
+        (click)="activeTab.set('BRAND')"
+      >
+        <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+        <span>Información del Local</span>
+      </button>
+
+      <button
+        type="button"
+        class="bo-menu-item"
+        [class.active]="activeTab() === 'BRANCHES'"
+        (click)="activeTab.set('BRANCHES')"
+      >
+        <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>
+        <span>Sedes y Horarios ({{ business()?.establishments?.length || 0 }})</span>
+      </button>
+
+      <button
+        type="button"
+        class="bo-menu-item"
+        [class.active]="activeTab() === 'REVIEWS'"
+        (click)="activeTab.set('REVIEWS')"
+      >
+        <i class="fa-solid fa-star" aria-hidden="true"></i>
+        <span>Reseñas Recibidas ({{ reviews().length }})</span>
+      </button>
+    </nav>
+
+    <div class="bo-sidebar-footer">
+      <div class="bo-user-box">
+        <div class="bo-user-avatar">AL</div>
+        <div class="bo-user-meta">
+          <strong>{{ authService.user()?.name || 'Admin Local' }}</strong>
+          <small>{{ authService.user()?.email || 'marca@knect.com' }}</small>
+        </div>
+      </div>
+      <div class="bo-footer-actions">
+        @if (business(); as biz) {
+          <a [routerLink]="['/businesses', biz.id]" class="bo-footer-link">
+            <i class="fa-solid fa-eye" aria-hidden="true"></i> Ver Ficha Pública del Local
+          </a>
+        }
+        <button type="button" class="bo-logout-btn" (click)="logout()">
+          <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Cerrar sesión
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Área Principal del BackOffice del Local -->
+  <div class="bo-main">
+    <header class="bo-header-container">
+      <div class="bo-header-top">
+        <h1 class="bo-title">
+          @switch (activeTab()) {
+            @case ('ANALYTICS') {
+              <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+            }
+            @case ('BRAND') {
+              <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+            }
+            @case ('BRANCHES') {
+              <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>
+            }
+            @case ('REVIEWS') {
+              <i class="fa-solid fa-star" aria-hidden="true"></i>
+            }
+          }
+          {{ pageTitle }}
+        </h1>
+        @if (business(); as biz) {
+          <a [routerLink]="['/businesses', biz.id]" class="bo-btn-new">
+            <i class="fa-solid fa-eye" aria-hidden="true"></i> Ver Mi Restaurante en el Portal
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+          </a>
+        }
+      </div>
+      <div class="bo-breadcrumb">
+        <span><i class="fa-solid fa-store" aria-hidden="true"></i> MI LOCAL</span>
+        <span class="bo-crumb-sep"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></span>
+        <span>{{ business()?.name || 'ESTABLECIMIENTO' }}</span>
+        <span class="bo-crumb-sep"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></span>
+        <span class="bo-crumb-current">{{ breadcrumbLabel }}</span>
+      </div>
+    </header>
+
+    @if (feedbackMsg()) {
+      <div class="alert-banner alert-success" style="margin-bottom: 1.5rem" role="status" aria-live="polite">
+        <i class="fa-solid fa-circle-check" aria-hidden="true"></i> {{ feedbackMsg() }}
+      </div>
+    }
+
+    <!-- ===================================================================== -->
+    <!-- SECCIÓN 1: DASHBOARD DE MI LOCAL (MÉTRICAS Y EMBUDO)                  -->
+    <!-- ===================================================================== -->
+    @if (activeTab() === 'ANALYTICS' && analytics(); as an) {
+      <section class="bo-section-card">
+        <div class="bo-card-head-flex">
+          <div>
+            <h2 class="bo-section-title">
+              <span><i class="fa-solid fa-gauge-high" aria-hidden="true"></i> INDICADORES CLAVE DE RENDIMIENTO DE TU RESTAURANTE</span>
+            </h2>
+            <p class="bo-section-desc">
+              Monitorea en tiempo real las visitas a tu ficha, búsquedas, clics a WhatsApp y calificaciones de tus clientes.
+            </p>
+          </div>
+          <button type="button" class="bo-btn-save" (click)="activeTab.set('BRAND')">
+            <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Editar Información del Local
+          </button>
+        </div>
+
+        <div class="kpi-grid">
+          <app-kpi-stat-card
+            label="Calificación Promedio"
+            [value]="an.ratingAvg + ' / 5.0'"
+            [subtitle]="an.reviewCount + ' reseñas recibidas'"
+            icon="fa-solid fa-star"
+            valueColor="var(--knect-warning)"
+            delta="Verificado"
+            deltaType="up"
+            sparklinePoints="4,18 20,16 36,12 52,10 68,6 78,4"
+          />
+          <app-kpi-stat-card
+            label="Apariciones en Búsquedas"
+            [value]="an.searchAppearanceCount"
+            subtitle="Consultas en el directorio"
+            icon="fa-solid fa-magnifying-glass"
+            valueColor="var(--knect-accent)"
+            delta="+14%"
+            deltaType="up"
+            sparklinePoints="4,20 18,17 34,15 50,11 64,9 78,5"
+          />
+          <app-kpi-stat-card
+            label="Visitas a la Ficha"
+            [value]="an.viewCount"
+            subtitle="Visualizaciones de perfil"
+            icon="fa-solid fa-eye"
+            valueColor="var(--knect-primary)"
+            delta="+9%"
+            deltaType="up"
+            sparklinePoints="4,19 20,14 36,16 52,9 66,8 78,4"
+          />
+          <app-kpi-stat-card
+            label="Clics a WhatsApp Directo"
+            [value]="an.whatsappClickCount"
+            subtitle="Conversiones de contacto"
+            icon="fa-brands fa-whatsapp"
+            valueColor="var(--knect-success)"
+            [delta]="whatsappConversionRate() + '% conv.'"
+            deltaType="up"
+            sparklinePoints="4,21 20,18 36,14 52,12 66,7 78,3"
+          />
+        </div>
+
+        <div class="analytics-insights-grid">
+          <div class="bo-inner-panel">
+            <h3 class="bo-sub-heading">
+              <i class="fa-solid fa-filter-circle-dollar" aria-hidden="true"></i> Embudo de Conversión de tu Local
+            </h3>
+            <div class="funnel-bars">
+              <div class="funnel-step">
+                <div class="funnel-meta">
+                  <strong>1. Apariciones en búsquedas</strong>
+                  <span class="tabular-nums">{{ an.searchAppearanceCount }}</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" style="width: 100%"></div>
+                </div>
+              </div>
+
+              <div class="funnel-step">
+                <div class="funnel-meta">
+                  <strong>2. Visitas a la ficha comercial</strong>
+                  <span class="tabular-nums">{{ an.viewCount }}</span>
+                </div>
+                <div class="progress-track">
+                  <div
+                    class="progress-fill"
+                    [style.width.%]="an.searchAppearanceCount ? (an.viewCount / an.searchAppearanceCount) * 100 : 65"
+                  ></div>
+                </div>
+              </div>
+
+              <div class="funnel-step">
+                <div class="funnel-meta">
+                  <strong>3. Clics directos a WhatsApp ({{ whatsappConversionRate() }}%)</strong>
+                  <span class="tabular-nums">{{ an.whatsappClickCount }}</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" [style.width.%]="whatsappConversionRate()"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bo-inner-panel">
+            <h3 class="bo-sub-heading">
+              <i class="fa-solid fa-comments" aria-hidden="true"></i> Salud de Atención a Reseñas
+            </h3>
+            <div class="reply-rate-box">
+              <strong class="reply-rate-num tabular-nums">{{ reviewReplyRate() }}%</strong>
+              <span>de reseñas cuentan con respuesta oficial</span>
+            </div>
+
+            <div class="progress-track" style="margin-bottom: 1rem">
+              <div class="progress-fill" [style.width.%]="reviewReplyRate()"></div>
+            </div>
+
+            <div class="reply-counters">
+              <span class="bo-badge-green">
+                <i class="fa-solid fa-circle-check" aria-hidden="true"></i> {{ an.repliedReviewsCount || 0 }} respondidas
+              </span>
+              <span class="bo-badge-amber">
+                <i class="fa-solid fa-clock" aria-hidden="true"></i> {{ an.pendingReviewsCount || 0 }} pendientes
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="bo-section-card">
+        <h2 class="bo-section-title">
+          <span><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i> RENDIMIENTO POR SEDE Y CLICS A WHATSAPP</span>
+        </h2>
+        <div class="bo-table-wrap">
+          <table class="bo-table">
+            <thead>
+              <tr>
+                <th scope="col">Nombre de la Sede</th>
+                <th scope="col">Barrio / Zona</th>
+                <th scope="col">Dirección</th>
+                <th scope="col">WhatsApp Configurado</th>
+                <th scope="col">Clics a WhatsApp</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (b of an.branchesPerformance; track b.establishmentId || b.id) {
+                <tr>
+                  <td><strong>{{ b.name }}</strong></td>
+                  <td>{{ b.neighborhood }}</td>
+                  <td>{{ b.address }}</td>
+                  <td><code>{{ b.whatsapp || b.phone }}</code></td>
+                  <td class="tabular-nums"><strong>{{ b.whatsappClicks || 0 }} clics</strong></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+
+    <!-- ===================================================================== -->
+    <!-- SECCIÓN 2: GESTIÓN DE INFORMACIÓN E IDENTIDAD DEL LOCAL               -->
+    <!-- ===================================================================== -->
+    @if (activeTab() === 'BRAND') {
+      <div class="brand-editor-layout">
+        <form (ngSubmit)="saveBrandIdentity()">
+          <section class="bo-section-card">
+            <h2 class="bo-section-title">
+              <span><i class="fa-solid fa-id-card" aria-hidden="true"></i> DATOS GENERALES DEL RESTAURANTE / LOCAL</span>
+            </h2>
+            <div class="bo-form-grid-3">
+              <div>
+                <label class="bo-field-label" for="brand-name">
+                  <i class="fa-solid fa-store" aria-hidden="true"></i> Nombre Comercial *
+                </label>
+                <input id="brand-name" type="text" class="bo-input" [(ngModel)]="brandForm.name" name="name" required />
+              </div>
+              <div>
+                <label class="bo-field-label" for="brand-legal">
+                  <i class="fa-solid fa-building" aria-hidden="true"></i> Razón Social
+                </label>
+                <input id="brand-legal" type="text" class="bo-input" [(ngModel)]="brandForm.legalName" name="legalName" />
+              </div>
+              <div>
+                <label class="bo-field-label" for="brand-tax">
+                  <i class="fa-solid fa-file-invoice" aria-hidden="true"></i> NIT / Identificación Tributaria
+                </label>
+                <input id="brand-tax" type="text" class="bo-input" [(ngModel)]="brandForm.taxNumber" name="taxNumber" />
+              </div>
+            </div>
+
+            <div class="bo-form-grid-3">
+              <div>
+                <label class="bo-field-label" for="brand-category">
+                  <i class="fa-solid fa-utensils" aria-hidden="true"></i> Categoría del Establecimiento
+                </label>
+                <select id="brand-category" class="bo-input" [(ngModel)]="brandForm.establishmentTypeId" name="establishmentTypeId">
+                  @for (cat of categories(); track cat.establishmentTypeId) {
+                    <option [ngValue]="cat.establishmentTypeId">{{ cat.name }}</option>
+                  }
+                </select>
+              </div>
+              <div>
+                <label class="bo-field-label" for="brand-neighborhood">
+                  <i class="fa-solid fa-location-dot" aria-hidden="true"></i> Barrio Principal
+                </label>
+                <input id="brand-neighborhood" type="text" class="bo-input" [(ngModel)]="brandForm.neighborhood" name="neighborhood" />
+              </div>
+              <div>
+                <label class="bo-field-label" for="brand-color-hex">
+                  <i class="fa-solid fa-palette" aria-hidden="true"></i> Color Corporativo (HEX)
+                </label>
+                <div class="color-picker-row">
+                  <input
+                    type="color"
+                    class="color-input-native"
+                    [(ngModel)]="brandForm.primaryColor"
+                    name="primaryColorPicker"
+                  />
+                  <input
+                    id="brand-color-hex"
+                    type="text"
+                    class="bo-input"
+                    [(ngModel)]="brandForm.primaryColor"
+                    name="primaryColorHex"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="bo-form-grid-3">
+              <div>
+                <label class="bo-field-label" for="brand-phone">
+                  <i class="fa-solid fa-phone" aria-hidden="true"></i> Teléfono General
+                </label>
+                <input id="brand-phone" type="tel" class="bo-input" [(ngModel)]="brandForm.phone" name="phone" />
+              </div>
+              <div>
+                <label class="bo-field-label" for="brand-whatsapp">
+                  <i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp Directo (ej. 57300...)
+                </label>
+                <input id="brand-whatsapp" type="tel" class="bo-input" [(ngModel)]="brandForm.whatsapp" name="whatsapp" />
+              </div>
+              <div>
+                <label class="bo-field-label" for="brand-website">
+                  <i class="fa-solid fa-globe" aria-hidden="true"></i> Sitio Web / Menú Digital
+                </label>
+                <input id="brand-website" type="url" class="bo-input" [(ngModel)]="brandForm.website" name="website" />
+              </div>
+            </div>
+          </section>
+
+          <section class="bo-section-card">
+            <h2 class="bo-section-title">
+              <span><i class="fa-solid fa-sliders" aria-hidden="true"></i> MODALIDAD OPERATIVA Y DESCRIPCIÓN BILINGÜE</span>
+            </h2>
+            <fieldset class="operating-mode-box">
+              <legend class="bo-field-label">Modalidad Operativa del Restaurante</legend>
+              <div class="radio-group">
+                <label class="radio-option">
+                  <input
+                    type="radio"
+                    name="operatingMode"
+                    [checked]="!brandForm.isGhostKitchen"
+                    (change)="brandForm.isGhostKitchen = false; brandForm.hasDineIn = true"
+                  />
+                  <span>
+                    <i class="fa-solid fa-utensils" aria-hidden="true"></i> Local físico con atención al público en mesa
+                  </span>
+                </label>
+                <label class="radio-option">
+                  <input
+                    type="radio"
+                    name="operatingMode"
+                    [checked]="brandForm.isGhostKitchen === true"
+                    (change)="brandForm.isGhostKitchen = true; brandForm.hasDineIn = false"
+                  />
+                  <span>
+                    <i class="fa-solid fa-fire-burner" aria-hidden="true"></i> Cocina Oculta (Dark Kitchen – Domicilios / WhatsApp)
+                  </span>
+                </label>
+              </div>
+            </fieldset>
+
+            <div class="bo-form-grid-2">
+              <div>
+                <label class="bo-field-label" for="brand-desc-es">
+                  <i class="fa-solid fa-align-left" aria-hidden="true"></i> Descripción Comercial (Español)
+                </label>
+                <textarea id="brand-desc-es" rows="3" class="bo-input" [(ngModel)]="brandForm.description" name="description"></textarea>
+              </div>
+              <div>
+                <label class="bo-field-label" for="brand-desc-en">
+                  <i class="fa-solid fa-language" aria-hidden="true"></i> Commercial Description (English)
+                </label>
+                <textarea id="brand-desc-en" rows="3" class="bo-input" [(ngModel)]="brandForm.descriptionEn" name="descriptionEn"></textarea>
+              </div>
+            </div>
+          </section>
+
+          <section class="bo-section-card">
+            <h2 class="bo-section-title">
+              <span><i class="fa-solid fa-images" aria-hidden="true"></i> ARCHIVOS MULTIMEDIA (LOGOTIPO Y BANNER)</span>
+            </h2>
+            <div class="bo-form-grid-2">
+              <div class="bo-media-box">
+                <span class="bo-field-label">
+                  <i class="fa-solid fa-image" aria-hidden="true"></i> LOGOTIPO OFICIAL
+                </span>
+                @if (brandForm.logoUrl) {
+                  <img [src]="brandForm.logoUrl" alt="Logo" class="bo-media-preview-sm" />
+                }
+                <input id="brand-logo-url" type="url" class="bo-input" [(ngModel)]="brandForm.logoUrl" name="logoUrl" placeholder="https://..." />
+                <input type="file" accept="image/*" (change)="onImageFileChange($event, 'logoUrl')" />
+              </div>
+
+              <div class="bo-media-box">
+                <span class="bo-field-label">
+                  <i class="fa-solid fa-panorama" aria-hidden="true"></i> BANNER DE PORTADA
+                </span>
+                @if (brandForm.bannerUrl) {
+                  <img [src]="brandForm.bannerUrl" alt="Banner" class="bo-media-preview-lg" />
+                }
+                <input id="brand-banner-url" type="url" class="bo-input" [(ngModel)]="brandForm.bannerUrl" name="bannerUrl" placeholder="https://..." />
+                <input type="file" accept="image/*" (change)="onImageFileChange($event, 'bannerUrl')" />
+              </div>
+            </div>
+
+            <div class="bo-form-footer">
+              <button type="submit" class="bo-btn-save" [disabled]="isSaving()">
+                <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Guardar Información del Local
+              </button>
+            </div>
+          </section>
+        </form>
+
+        <!-- Vista previa en vivo -->
+        <aside class="bo-section-card preview-card" aria-label="Vista previa en tiempo real">
+          <h3 class="bo-section-title" style="padding: 1rem 1.25rem 0">
+            <span><i class="fa-solid fa-eye" aria-hidden="true"></i> VISTA PREVIA DE TU TARJETA</span>
+          </h3>
+          <div
+            class="preview-banner"
+            [style.backgroundImage]="
+              'linear-gradient(180deg, rgba(16,38,66,0.2) 0%, rgba(16,38,66,0.85) 100%), url(' +
+              (brandForm.bannerUrl || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80') +
+              ')'
+            "
+            [style.borderBottomColor]="brandForm.primaryColor || '#00A3FF'"
+          >
+            <span class="preview-mode-badge">
+              @if (brandForm.isGhostKitchen) {
+                <i class="fa-solid fa-fire-burner" aria-hidden="true"></i> Dark Kitchen
+              } @else {
+                <i class="fa-solid fa-utensils" aria-hidden="true"></i> Salón Físico
+              }
+            </span>
+            @if (brandForm.logoUrl) {
+              <img [src]="brandForm.logoUrl" alt="" class="preview-logo" />
+            }
+          </div>
+          <div class="preview-body">
+            <h3>{{ brandForm.name || 'Nombre de tu restaurante' }}</h3>
+            <p class="preview-meta">
+              <i class="fa-solid fa-location-dot" aria-hidden="true"></i> {{ brandForm.neighborhood || 'Barrio' }}
+            </p>
+            <p class="preview-desc">{{ brandForm.description || 'Descripción comercial en el directorio.' }}</p>
+          </div>
+        </aside>
+      </div>
+    }
+
+    <!-- ===================================================================== -->
+    <!-- SECCIÓN 3: SEDES, HORARIOS Y WHATSAPP                                 -->
+    <!-- ===================================================================== -->
+    @if (activeTab() === 'BRANCHES') {
+      <section class="bo-section-card">
+        <h2 class="bo-section-title">
+          <span>
+            <i class="fa-solid fa-map-pin" aria-hidden="true"></i>
+            {{ editingBranchId ? 'EDITAR SEDE #' + editingBranchId : 'REGISTRAR NUEVA SEDE GEORREFERENCIADA' }}
+          </span>
+        </h2>
+        <form (ngSubmit)="saveBranch()">
+          <div class="bo-form-grid-3">
+            <div>
+              <label class="bo-field-label" for="branch-name">
+                <i class="fa-solid fa-store" aria-hidden="true"></i> Nombre de la Sede *
+              </label>
+              <input id="branch-name" type="text" class="bo-input" [(ngModel)]="branchForm.name" name="bName" required />
+            </div>
+            <div>
+              <label class="bo-field-label" for="branch-neighborhood">
+                <i class="fa-solid fa-location-dot" aria-hidden="true"></i> Barrio / Sector *
+              </label>
+              <input id="branch-neighborhood" type="text" class="bo-input" [(ngModel)]="branchForm.neighborhood" name="bNeighborhood" required />
+            </div>
+            <div>
+              <label class="bo-field-label" for="branch-address">
+                <i class="fa-solid fa-road" aria-hidden="true"></i> Dirección Física *
+              </label>
+              <input id="branch-address" type="text" class="bo-input" [(ngModel)]="branchForm.address" name="bAddress" required />
+            </div>
+          </div>
+
+          <div class="bo-form-grid-3">
+            <div>
+              <label class="bo-field-label" for="branch-lat">
+                <i class="fa-solid fa-compass" aria-hidden="true"></i> Latitud (Mapa)
+              </label>
+              <input id="branch-lat" type="number" step="0.0001" class="bo-input" [(ngModel)]="branchForm.latitude" name="bLat" />
+            </div>
+            <div>
+              <label class="bo-field-label" for="branch-lng">
+                <i class="fa-solid fa-compass" aria-hidden="true"></i> Longitud (Mapa)
+              </label>
+              <input id="branch-lng" type="number" step="0.0001" class="bo-input" [(ngModel)]="branchForm.longitude" name="bLng" />
+            </div>
+            <div>
+              <label class="bo-field-label" for="branch-schedules">
+                <i class="fa-regular fa-clock" aria-hidden="true"></i> Horarios de Atención
+              </label>
+              <input id="branch-schedules" type="text" class="bo-input" [(ngModel)]="branchForm.schedules" name="bSchedules" />
+            </div>
+          </div>
+
+          <div class="bo-form-grid-2">
+            <div>
+              <label class="bo-field-label" for="branch-phone">
+                <i class="fa-solid fa-phone" aria-hidden="true"></i> Teléfono de la Sede
+              </label>
+              <input id="branch-phone" type="tel" class="bo-input" [(ngModel)]="branchForm.phone" name="bPhone" />
+            </div>
+            <div>
+              <label class="bo-field-label" for="branch-whatsapp">
+                <i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp Directo (ej. 57300...)
+              </label>
+              <input id="branch-whatsapp" type="tel" class="bo-input" [(ngModel)]="branchForm.whatsapp" name="bWhatsapp" />
+            </div>
+          </div>
+
+          <div class="bo-form-footer">
+            @if (editingBranchId) {
+              <button type="button" class="bo-btn-secondary" (click)="resetBranchForm()">Cancelar</button>
+            }
+            <button type="submit" class="bo-btn-save" [disabled]="isSaving()">
+              <i class="fa-solid" [class.fa-floppy-disk]="editingBranchId" [class.fa-plus]="!editingBranchId" aria-hidden="true"></i>
+              {{ editingBranchId ? 'Guardar Cambios de Sede' : 'Agregar Sede al Mapa' }}
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="bo-section-card">
+        <h2 class="bo-section-title">
+          <span><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i> SEDES REGISTRADAS ({{ business()?.establishments?.length || 0 }})</span>
+        </h2>
+        <div class="bo-table-wrap">
+          <table class="bo-table">
+            <thead>
+              <tr>
+                <th scope="col">Sede</th>
+                <th scope="col">Barrio y Dirección</th>
+                <th scope="col">Horarios</th>
+                <th scope="col">WhatsApp</th>
+                <th scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (b of business()?.establishments || []; track b.establishmentId || b.id) {
+                <tr>
+                  <td><strong>{{ b.name }}</strong></td>
+                  <td>
+                    {{ b.neighborhood }}<br />
+                    <small>{{ b.address }}</small>
+                  </td>
+                  <td>{{ b.schedules }}</td>
+                  <td><code>{{ b.whatsapp || b.phone }}</code></td>
+                  <td>
+                    <div class="bo-actions">
+                      <button type="button" class="bo-action-btn" title="Editar Sede" (click)="startEditBranch(b)">
+                        <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="bo-action-btn delete"
+                        title="Eliminar Sede"
+                        (click)="confirmDeleteBranch.set(b)"
+                      >
+                        <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+
+    <!-- ===================================================================== -->
+    <!-- SECCIÓN 4: RESEÑAS DE CLIENTES Y RESPUESTA OFICIAL                    -->
+    <!-- ===================================================================== -->
+    @if (activeTab() === 'REVIEWS') {
+      <section class="bo-section-card">
+        <h2 class="bo-section-title">
+          <span><i class="fa-solid fa-star" aria-hidden="true"></i> RESEÑAS Y CALIFICACIONES RECIBIDAS DE CLIENTES</span>
+        </h2>
+        @if (reviews().length === 0) {
+          <p class="bo-section-desc">Aún no se han recibido reseñas en este restaurante.</p>
+        } @else {
+          <div class="reviews-stack">
+            @for (rev of reviews(); track rev.reviewId || rev.id) {
+              @let rId = rev.reviewId || rev.id;
+              <article class="bo-inner-panel">
+                <div class="review-manage-header">
+                  <div>
+                    <strong><i class="fa-solid fa-user-check" aria-hidden="true"></i> {{ rev.userName || 'Cliente Knect' }}</strong>
+                    <span class="stars-inline">
+                      <i class="fa-solid fa-star" aria-hidden="true"></i> {{ rev.rating }} / 5
+                    </span>
+                    @if (rev.adminReply) {
+                      <span class="bo-badge-green" style="margin-left: 0.5rem">
+                        <i class="fa-solid fa-circle-check" aria-hidden="true"></i> Respondida
+                      </span>
+                    } @else {
+                      <span class="bo-badge-amber" style="margin-left: 0.5rem">
+                        <i class="fa-solid fa-clock" aria-hidden="true"></i> Pendiente
+                      </span>
+                    }
+                  </div>
+                  <small>{{ rev.createAt | date: 'medium' }}</small>
+                </div>
+                <p class="customer-comment">"{{ rev.comment }}"</p>
+
+                <div class="reply-input-row">
+                  <input
+                    type="text"
+                    class="bo-input"
+                    [(ngModel)]="replyDrafts[rId]"
+                    placeholder="Escribe la respuesta oficial de tu restaurante para este cliente..."
+                  />
+                  <button type="button" class="bo-btn-save" (click)="submitReply(rev)">
+                    <i class="fa-solid fa-reply" aria-hidden="true"></i> Responder
+                  </button>
+                </div>
+              </article>
+            }
+          </div>
+        }
+      </section>
+    }
+  </div>
+</div>
+
+@if (confirmDeleteBranch(); as branchToDelete) {
+  <div class="unal-modal-backdrop" role="dialog" aria-modal="true">
+    <div class="unal-modal-card">
+      <div class="unal-modal-icon">
+        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+      </div>
+      <h3>¿Eliminar esta sede?</h3>
+      <p>Estás a punto de eliminar la sede <strong>{{ branchToDelete.name }}</strong>.</p>
+      <div class="unal-modal-actions">
+        <button type="button" class="bo-btn-secondary" (click)="confirmDeleteBranch.set(null)">Cancelar</button>
+        <button type="button" class="bo-btn-danger" (click)="deleteBranch(branchToDelete)">
+          <i class="fa-solid fa-trash-can" aria-hidden="true"></i> Sí, eliminar sede
+        </button>
+      </div>
+    </div>
+  </div>
+}

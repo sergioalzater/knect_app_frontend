@@ -1,59 +1,75 @@
-# KnectAppFrontend
+# Knect - Frontend Web (Angular)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.0.
+Aplicación cliente para la plataforma **Knect: Directorio Digital y Vitrina Comercial de Manizales**. Desarrollada con **Angular (Standalone Components, Signals)**, diseño atómico responsivo, soporte bilingüe (Español / Inglés) y consumo de la API REST de Spring Boot.
 
-## Development server
+---
 
-To start a local development server, run:
+## 🛠️ Requisitos Previos
 
-```bash
-ng serve
-```
+1. **Node.js** versión `v20.x`, `v22.x` o `v24.x` instalado (`node -v`).
+2. **NPM** instalado (`npm -v`).
+3. *(Opcional)* Angular CLI instalado globalmente: `npm install -g @angular/cli`.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## 📥 Instalación de Dependencias
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Abre una terminal en la carpeta del frontend y ejecuta:
 
 ```bash
-ng generate --help
+npm install
 ```
 
-## Building
+---
 
-To build the project run:
+## 🚀 Cómo Ejecutar en Modo Desarrollo
+
+Para levantar el servidor de desarrollo local:
 
 ```bash
-ng build
+npm start
 ```
+*(O alternativamente: `npx ng serve`)*
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Una vez iniciado el servidor, abre tu navegador en:  
+👉 **`http://localhost:4200`**
 
-## Running unit tests
+El servidor cuenta con recarga en caliente (**Hot Reload**): cualquier cambio que guardes en los archivos se reflejará automáticamente en la pantalla.
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+---
+
+## 🌐 Conexión con el Backend
+
+Por defecto, el frontend se comunica con el backend de Spring Boot en:  
+`http://localhost:8080/api`
+
+Asegúrate de tener el backend corriendo en el puerto `8080` antes de iniciar sesión o realizar peticiones a la API.
+
+---
+
+## 🎨 Características Implementadas
+
+* **Diseño Atómico Moderno**:
+  * **Átomos:** Botones (`app-button`), inputs, insignias de estado y badges de categoría.
+  * **Moléculas:** Tarjetas de negocio (`app-business-card`), barras de búsqueda y filtros.
+  * **Organismos:** Barra de navegación con selector de idioma (`app-navbar`), pie de página (`app-footer`), panel de administración (`app-super-admin`, `app-brand-admin`).
+* **Branding e Identidad**:
+  * Logo vectorial integrado [`public/logo-knect.svg`](public/logo-knect.svg) optimizado para alta resolución y pantallas móviles.
+* **Internacionalización (i18n)**:
+  * Soporte nativo para alternar entre **Español (ES)** e **Inglés (EN)** al instante.
+* **Paneles de Control**:
+  * **Super Administrador:** Monitoreo y gestión de comercios de Manizales, auditoría y métricas globales.
+  * **Administrador de Local:** Gestión de perfil comercial, catálogo de productos/servicios, enlaces a WhatsApp y redes sociales.
+
+---
+
+## 📦 Compilación para Producción
+
+Para compilar el proyecto optimizado para despliegue:
 
 ```bash
-ng test
+npm run build
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Los artefactos listos para producción se generarán en la carpeta:  
+`dist/knect_app_frontend/`

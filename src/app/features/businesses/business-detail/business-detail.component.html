@@ -1,0 +1,354 @@
+@if (isLoading()) {
+  <div class="knect-container detail-skeleton" aria-busy="true">
+    <span class="sr-only" role="status">{{ i18n.t('biz.loading') }}</span>
+    <div class="skeleton skeleton-banner" aria-hidden="true"></div>
+    <div class="skeleton skeleton-title" aria-hidden="true"></div>
+    <div class="skeleton skeleton-text" aria-hidden="true"></div>
+    <div class="skeleton skeleton-text w-60" aria-hidden="true"></div>
+  </div>
+} @else if (business(); as biz) {
+  <!-- RF-06: Personalización Visual con Banner Superior y Color Corporativo -->
+  <div class="business-profile-wrapper" [style.--brand-color]="brandColor()">
+    <div
+      class="profile-banner"
+      [style.backgroundImage]="
+        'linear-gradient(270deg, rgba(26, 54, 93, 0.4) 0%, #1A365D 92%), url(' +
+        (biz.bannerUrl || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1600&q=80') +
+        ')'
+      "
+    >
+      <div class="knect-container banner-wrapper">
+        <nav class="unal-hero-breadcrumb" aria-label="Breadcrumb">
+          <i class="fa-solid fa-location-arrow" aria-hidden="true"></i>
+          <span>{{ i18n.lang() === 'es' ? 'Estás en:' : 'You are in:' }}</span>
+          <a routerLink="/">{{ i18n.t('nav.home') }}</a>
+          <span>/</span>
+          <a routerLink="/businesses">{{ i18n.t('nav.directory') }}</a>
+          <span>/</span>
+          <span class="crumb-active">{{ biz.name }}</span>
+        </nav>
+
+        <div class="banner-content">
+          <div class="brand-identity">
+            @if (biz.logoUrl) {
+              <img
+                [src]="biz.logoUrl"
+                alt=""
+                class="profile-logo"
+                width="96"
+                height="96"
+                [style.borderColor]="brandColor()"
+              />
+            }
+            <div class="brand-titles">
+              <div class="badges-row">
+                <span class="badge-category">
+                  <i class="fa-solid fa-tag" aria-hidden="true"></i>
+                  {{ i18n.lang() === 'es' ? biz.category : (biz.categoryEn || biz.category) }}
+                </span>
+
+                @if ((biz.category || '').toLowerCase().includes('restauran')) {
+                  @if (biz.isGhostKitchen) {
+                    <span class="badge badge-warning">
+                      <i class="fa-solid fa-fire-burner" aria-hidden="true"></i>
+                      {{ i18n.t('biz.darkKitchenBadge') }}
+                    </span>
+                  } @else {
+                    <span class="badge badge-success">
+                      <i class="fa-solid fa-utensils" aria-hidden="true"></i>
+                      {{ i18n.t('biz.dineInBadge') }}
+                    </span>
+                  }
+                }
+              </div>
+
+              <h1>{{ biz.name }}</h1>
+
+              <div class="rating-summary">
+                <span class="stars-gold">
+                  <i class="fa-solid fa-star" aria-hidden="true"></i>
+                  {{ biz.ratingAvg || '5.0' }}
+                </span>
+                <span class="review-total">({{ reviews().length }} {{ i18n.t('biz.reviewsWord') }})</span>
+                <span class="dot-sep" aria-hidden="true">&bull;</span>
+                <span>
+                  <i class="fa-solid fa-location-dot" style="color: var(--knect-accent)" aria-hidden="true"></i>
+                  {{ biz.neighborhood || 'Medellín' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="banner-actions">
+            @if (authService.isSuperAdmin()) {
+              <a
+                [routerLink]="['/brand-admin']"
+                [queryParams]="{ businessId: biz.id }"
+                class="btn-knect btn-knect-outline btn-lg banner-admin-btn"
+              >
+                <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                <span>Editar Local (SuperAdmin)</span>
+              </a>
+            }
+            <button
+              type="button"
+              class="btn-knect btn-knect-whatsapp btn-lg"
+              (click)="openWhatsapp(selectedBranch())"
+            >
+              <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+              <span>{{ i18n.t('biz.whatsappBtn') }}</span>
+              @if (selectedBranch()) {
+                <small>({{ selectedBranch()?.name }})</small>
+              }
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="knect-container profile-main">
+      <!-- Descripción Comercial -->
+      <section class="knect-card-white info-card" aria-labelledby="about-heading">
+        <h2 id="about-heading" class="section-heading">
+          <i class="fa-solid fa-store" aria-hidden="true"></i>
+          {{ i18n.t('biz.aboutPrefix') }} {{ biz.name }}
+        </h2>
+        <p class="business-description">
+          {{ i18n.lang() === 'es' ? biz.description : (biz.descriptionEn || biz.description) }}
+        </p>
+
+        <div class="quick-metadata">
+          @if (biz.email) {
+            <span>
+              <strong><i class="fa-solid fa-envelope" aria-hidden="true"></i> Email:</strong>
+              {{ biz.email }}
+            </span>
+          }
+          @if (biz.website) {
+            <span>
+              <strong><i class="fa-solid fa-globe" aria-hidden="true"></i> Web:</strong>
+              <a [href]="biz.website" target="_blank" rel="noopener noreferrer">{{ biz.website }}</a>
+            </span>
+          }
+          <span>
+            <strong><i class="fa-solid fa-palette" aria-hidden="true"></i> {{ i18n.lang() === 'es' ? 'Color Corporativo:' : 'Brand Color:' }}</strong>
+            <span class="color-swatch" [style.backgroundColor]="brandColor()" aria-hidden="true"></span>
+            <code>{{ brandColor() }}</code>
+          </span>
+        </div>
+      </section>
+
+      <!-- RF-08 & RF-09: Moléculas BranchCard + Organismo InteractiveBranchMap -->
+      <section class="branches-and-map-grid">
+        <div class="branches-column">
+          <h2 class="section-heading">
+            <i class="fa-solid fa-map-pin" aria-hidden="true"></i>
+            {{ i18n.t('biz.branchesTitle') }}
+          </h2>
+          <p class="muted-subtitle">{{ i18n.t('biz.branchesSubtitle') }}</p>
+
+          <div class="branches-list">
+            @for (branch of biz.establishments || []; track branch.establishmentId || branch.id) {
+              @let isSelected = (selectedBranch()?.establishmentId || selectedBranch()?.id) === (branch.establishmentId || branch.id);
+              <app-branch-card
+                [branch]="branch"
+                [isSelected]="isSelected"
+                [brandColor]="brandColor()"
+                (branchSelected)="selectBranch($event)"
+                (whatsappClicked)="openWhatsapp($event)"
+              />
+            }
+          </div>
+        </div>
+
+        <div class="map-column">
+          <app-interactive-branch-map
+            [branches]="biz.establishments || []"
+            [selectedBranch]="selectedBranch()"
+            [brandColor]="brandColor()"
+            (branchSelected)="selectBranch($event)"
+          />
+        </div>
+      </section>
+
+      <!-- RF-10 & RF-12: Calificaciones, Reseñas Públicas y Respuestas Oficiales -->
+      <section class="reviews-section" aria-labelledby="reviews-heading">
+        <div class="reviews-header">
+          <div>
+            <h2 id="reviews-heading" class="section-heading">
+              <i class="fa-solid fa-comments" aria-hidden="true"></i>
+              {{ i18n.t('biz.reviewsTitle') }}
+            </h2>
+            <p class="muted-subtitle">
+              {{
+                i18n.lang() === 'es'
+                  ? 'Opiniones verificadas de usuarios compradores y respuestas oficiales del comercio.'
+                  : 'Verified buyer reviews and official business responses.'
+              }}
+            </p>
+          </div>
+          <div class="rating-big-box">
+            <span class="big-score tabular-nums">
+              <i class="fa-solid fa-star" aria-hidden="true"></i>
+              {{ biz.ratingAvg || '5.0' }}
+            </span>
+            <span class="big-sub">{{ reviews().length }} {{ i18n.t('biz.ratingsWord') }}</span>
+
+            @if (reviews().length > 0) {
+              <ul class="rating-bars" [attr.aria-label]="i18n.t('biz.ratingsWord')">
+                @for (row of ratingDistribution(); track row.star) {
+                  <li>
+                    <span class="bar-label">{{ row.star }} <i class="fa-solid fa-star" aria-hidden="true"></i></span>
+                    <span class="bar-track" aria-hidden="true">
+                      <span class="bar-fill" [style.width.%]="row.percent"></span>
+                    </span>
+                    <span class="bar-count tabular-nums">{{ row.count }}</span>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        </div>
+
+        <!-- RF-12: Formulario de Valoración -->
+        <div class="knect-card-white review-form-card">
+          <h3><i class="fa-solid fa-star-half-stroke" aria-hidden="true"></i> {{ i18n.t('biz.writeReviewTitle') }}</h3>
+
+          @if (authService.isLoggedIn()) {
+            @if (userExistingReview()) {
+              <div class="alert-info" role="note">
+                <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                {{ i18n.t('biz.updateReviewNote') }}
+              </div>
+            }
+            @if (reviewSavedMsg()) {
+              <div class="alert-banner alert-success" role="status">
+                <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                <span>{{ reviewSavedMsg() }}</span>
+              </div>
+            }
+            @if (reviewError()) {
+              <div class="alert-banner alert-error" role="alert">
+                <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                <span>{{ reviewError() }}</span>
+              </div>
+            }
+
+            <form (ngSubmit)="submitReview()">
+              <div class="rating-selector-row">
+                <app-knect-rating-stars
+                  [rating]="reviewRating"
+                  [interactive]="true"
+                  [showScore]="true"
+                  size="1.65rem"
+                  (ratingChange)="reviewRating = $event"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="reviewComment">
+                  <i class="fa-solid fa-comment-dots" aria-hidden="true"></i>
+                  {{ i18n.t('biz.commentLabel') }}
+                </label>
+                <textarea
+                  id="reviewComment"
+                  rows="3"
+                  class="form-control"
+                  [(ngModel)]="reviewComment"
+                  name="reviewComment"
+                  required
+                  [placeholder]="i18n.t('biz.commentPlaceholder')"
+                ></textarea>
+              </div>
+
+              <button
+                type="submit"
+                class="btn-knect btn-knect-accent"
+                [attr.aria-busy]="isSubmitting()"
+              >
+                <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+                <span>{{ i18n.t('biz.submitReview') }}</span>
+              </button>
+            </form>
+          } @else {
+            <div class="login-prompt">
+              <p>{{ i18n.t('biz.loginToReview') }}</p>
+              <a routerLink="/auth/login" class="btn-knect btn-knect-accent">
+                <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>
+                <span>{{ i18n.t('nav.login') }}</span>
+              </a>
+            </div>
+          }
+        </div>
+
+        <!-- Listado de Reseñas y Respuestas del Administrador -->
+        <div class="reviews-list">
+          @if (reviews().length === 0) {
+            <div class="knect-card-white empty-reviews">{{ i18n.t('biz.noReviews') }}</div>
+          } @else {
+            @for (rev of reviews(); track rev.id) {
+              <article class="knect-card-white review-item">
+                <div class="review-top">
+                  <div>
+                    <strong class="reviewer-name">
+                      <i class="fa-solid fa-circle-user" aria-hidden="true"></i>
+                      {{ rev.userName || 'Cliente Knect' }}
+                    </strong>
+                    @if (rev.establishmentName) {
+                      <span class="review-branch-tag">&bull; {{ rev.establishmentName }}</span>
+                    }
+                  </div>
+                  <div class="review-stars">
+                    <app-knect-rating-stars [rating]="rev.rating" [interactive]="false" size="0.95rem" />
+                    <small class="review-date">{{ rev.createAt | date: 'mediumDate' }}</small>
+                  </div>
+                </div>
+
+                <p class="review-comment">{{ rev.comment }}</p>
+
+                @if (rev.adminReply) {
+                  <div class="official-reply">
+                    <div class="reply-header">
+                      <strong>
+                        <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                        {{ i18n.t('biz.officialReply') }} ({{ biz.name }})
+                      </strong>
+                      @if (rev.adminReplyAt) {
+                        <small>{{ rev.adminReplyAt | date: 'shortDate' }}</small>
+                      }
+                    </div>
+                    <p>{{ rev.adminReply }}</p>
+                  </div>
+                }
+              </article>
+            }
+          }
+        </div>
+      </section>
+    </div>
+
+    <nav class="mobile-action-bar" [attr.aria-label]="i18n.t('biz.actionsLabel')">
+      @if (callHref(); as tel) {
+        <a [href]="tel" class="btn-knect btn-knect-outline">
+          <i class="fa-solid fa-phone" aria-hidden="true"></i>
+          <span>{{ i18n.t('biz.call') }}</span>
+        </a>
+      }
+      @if (directionsHref(); as maps) {
+        <a [href]="maps" target="_blank" rel="noopener noreferrer" class="btn-knect btn-knect-outline">
+          <i class="fa-solid fa-diamond-turn-right" aria-hidden="true"></i>
+          <span>{{ i18n.t('biz.directions') }}</span>
+        </a>
+      }
+      <button type="button" class="btn-knect btn-knect-whatsapp" (click)="openWhatsapp(selectedBranch())">
+        <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+        <span>WhatsApp</span>
+      </button>
+    </nav>
+  </div>
+} @else {
+  <div class="knect-container empty-detail" role="alert">
+    <h1>{{ i18n.t('biz.notFound') }}</h1>
+    <a routerLink="/businesses" class="btn-knect btn-knect-primary">{{ i18n.t('biz.backToDirectory') }}</a>
+  </div>
+}

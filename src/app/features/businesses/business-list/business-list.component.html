@@ -1,0 +1,217 @@
+<section class="directory-header">
+  <div class="knect-container">
+    <nav class="unal-hero-breadcrumb" aria-label="Breadcrumb">
+      <i class="fa-solid fa-location-arrow" aria-hidden="true"></i>
+      <span>{{ i18n.lang() === 'es' ? 'Estás en:' : 'You are in:' }}</span>
+      <a routerLink="/">{{ i18n.t('nav.home') }}</a>
+      <span>/</span>
+      <span class="crumb-active">{{ i18n.t('dir.title') }}</span>
+    </nav>
+    <h1>{{ i18n.t('dir.title') }}</h1>
+    <p>{{ i18n.t('dir.subtitle') }}</p>
+  </div>
+</section>
+
+<section class="directory-section">
+  <div class="knect-container">
+    <!-- RF-04: Panel de Filtros por Palabra Clave, Barrio, Categoría y Modalidad -->
+    <button
+      type="button"
+      class="btn-knect btn-knect-outline filters-toggle"
+      aria-controls="filters-panel"
+      [attr.aria-expanded]="filtersOpen()"
+      (click)="filtersOpen.set(!filtersOpen())"
+    >
+      <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+      <span>{{ i18n.t('dir.filters') }}</span>
+      @if (activeFiltersCount() > 0) {
+        <span class="filters-badge">{{ activeFiltersCount() }} {{ i18n.t('dir.filtersActive') }}</span>
+      }
+    </button>
+
+    <form
+      id="filters-panel"
+      class="knect-card-white filters-panel"
+      [class.is-open]="filtersOpen()"
+      role="search"
+      (ngSubmit)="applyFilters()"
+    >
+      <div class="filters-grid">
+        <div class="form-group">
+          <label class="form-label" for="f-search">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            {{ i18n.t('dir.searchLabel') }}
+          </label>
+          <input
+            id="f-search"
+            type="search"
+            class="form-control"
+            [ngModel]="searchQuery"
+            (ngModelChange)="onSearchChange($event)"
+            name="searchQuery"
+            autocomplete="off"
+            enterkeyhint="search"
+            [placeholder]="i18n.t('home.searchPlaceholder')"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="f-neighborhood">
+            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+            {{ i18n.t('dir.neighborhoodLabel') }}
+          </label>
+          <select
+            id="f-neighborhood"
+            class="form-control"
+            [ngModel]="selectedNeighborhood"
+            (ngModelChange)="onNeighborhoodChange($event)"
+            name="selectedNeighborhood"
+          >
+            <option value="">{{ i18n.t('dir.allNeighborhoods') }}</option>
+            @for (nb of neighborhoods(); track nb) {
+              <option [value]="nb">{{ nb }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="f-category">
+            <i class="fa-solid fa-tags" aria-hidden="true"></i>
+            {{ i18n.t('dir.categoryLabel') }}
+          </label>
+          <select
+            id="f-category"
+            class="form-control"
+            [ngModel]="selectedCategoryId"
+            (ngModelChange)="onCategoryChange($event)"
+            name="selectedCategoryId"
+          >
+            <option [ngValue]="null">{{ i18n.t('dir.allCategories') }}</option>
+            @for (cat of categories(); track cat.establishmentTypeId) {
+              <option [ngValue]="cat.establishmentTypeId">
+                {{ i18n.lang() === 'es' ? cat.name : (cat.nameEn || cat.name) }}
+              </option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="f-mode">
+            <i class="fa-solid fa-store" aria-hidden="true"></i>
+            {{ i18n.t('dir.modeLabel') }}
+          </label>
+          <select
+            id="f-mode"
+            class="form-control"
+            [ngModel]="selectedOperatingMode"
+            (ngModelChange)="onModeChange($event)"
+            name="selectedOperatingMode"
+          >
+            <option value="ALL">{{ i18n.t('dir.allModes') }}</option>
+            <option value="DINE_IN">{{ i18n.t('dir.dineInOnly') }}</option>
+            <option value="DARK_KITCHEN">{{ i18n.t('dir.darkKitchenOnly') }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Chips interactivos rápidos por Categoría + Acciones -->
+      <div class="filters-bottom-bar">
+        <div class="quick-cat-pills" role="group" aria-label="Filtros rápidos por categoría">
+          <button
+            type="button"
+            class="cat-pill-btn"
+            [class.active]="selectedCategoryId === null"
+            (click)="onCategoryChange(null)"
+          >
+            <i class="fa-solid fa-border-all" aria-hidden="true"></i>
+            <span>{{ i18n.t('dir.allCategories') }}</span>
+          </button>
+          @for (cat of categories(); track cat.establishmentTypeId) {
+            <button
+              type="button"
+              class="cat-pill-btn"
+              [class.active]="selectedCategoryId === cat.establishmentTypeId"
+              (click)="onCategoryChange(cat.establishmentTypeId)"
+            >
+              <i class="fa-solid fa-tag" aria-hidden="true"></i>
+              <span>{{ i18n.lang() === 'es' ? cat.name : (cat.nameEn || cat.name) }}</span>
+            </button>
+          }
+        </div>
+
+        <div class="btn-group">
+          <button type="button" class="btn-knect btn-knect-outline" (click)="clearFilters()">
+            <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
+            <span>{{ i18n.t('dir.clearFilters') }}</span>
+          </button>
+          <button type="submit" class="btn-knect btn-knect-accent">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <span>{{ i18n.t('home.searchBtn') }}</span>
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <!-- Contador de resultados -->
+    <div class="results-toolbar">
+      <p class="results-counter" role="status" aria-live="polite" aria-atomic="true">
+        @if (!isLoading() && !loadError()) {
+          <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+          <strong class="tabular-nums">{{ totalElements() }}</strong> {{ i18n.t('dir.resultsFound') }}
+        }
+      </p>
+      @if (activeFiltersCount() > 0) {
+        <button type="button" class="clear-inline-btn" (click)="clearFilters()">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          {{ i18n.t('dir.clearFilters') }} ({{ activeFiltersCount() }})
+        </button>
+      }
+    </div>
+
+    <div id="catalog-results" tabindex="-1">
+      @if (isLoading()) {
+        <div class="catalog-grid" aria-busy="true">
+          <span class="sr-only" role="status">{{ i18n.t('dir.loading') }}</span>
+          @for (i of skeletons; track i) {
+            <div class="skeleton skeleton-card" aria-hidden="true"></div>
+          }
+        </div>
+      } @else if (loadError()) {
+        <div class="empty-state" role="alert">
+          <div class="empty-icon" aria-hidden="true">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <h2>{{ i18n.t('dir.loadError') }}</h2>
+          <button type="button" class="btn-knect btn-knect-primary" (click)="loadCatalog()">
+            <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+            <span>{{ i18n.t('dir.retry') }}</span>
+          </button>
+        </div>
+      } @else if (businesses().length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon" aria-hidden="true">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </div>
+          <h2>{{ i18n.t('dir.noResults') }}</h2>
+          <p>{{ i18n.t('dir.noResultsHint') }}</p>
+          <button type="button" class="btn-knect btn-knect-primary" (click)="clearFilters()">
+            <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
+            <span>{{ i18n.t('dir.clearFilters') }}</span>
+          </button>
+        </div>
+      } @else {
+        <div class="catalog-grid">
+          @for (biz of businesses(); track biz.id) {
+            <app-business-card [business]="biz" [showReviewCount]="true" />
+          }
+        </div>
+
+        <app-pagination-bar
+          [currentPage]="currentPage()"
+          [totalPages]="totalPages()"
+          (pageChange)="goToPage($event)"
+        />
+      }
+    </div>
+  </div>
+</section>

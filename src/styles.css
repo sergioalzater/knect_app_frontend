@@ -1,1 +1,1324 @@
-/* You can add global styles to this file, and also import other style files */
+/* ============================================================================
+   KNECT DESIGN SYSTEM — EDICIÓN MINIMALISTA 2026 (Apple / Linear / Stripe / Vercel)
+   Arquitectura CSS Nativa + Variables Exactas Knect + WCAG 2.1 AA/AAA
+   ============================================================================ */
+
+:root {
+  /* Colores Principales e Institucionales */
+  --knect-primary: #1A365D;       /* Azul marino profundo para textos y elementos principales */
+  --knect-primary-hover: #102642; /* Tono más oscuro para estados hover */
+
+  /* Colores de Acento / Interactivos */
+  --knect-accent: #00A3FF;        /* Azul eléctrico para botones, enlaces y pines de mapa */
+  --knect-accent-hover: #0082CC;  /* Tono de acento para hover */
+
+  /* Colores Neutros / Lienzo para comercios */
+  --knect-bg-main: #FFFFFF;       /* Fondo general blanco puro */
+  --knect-bg-card: #F4F6F9;       /* Gris nube muy suave para tarjetas de establecimientos y contenedores */
+  --knect-border: #E2E8F0;        /* Bordes sutiles y limpios */
+
+  /* Colores de Texto */
+  --knect-text-main: #1A365D;     /* Texto principal */
+  --knect-text-muted: #64748B;    /* Textos secundarios, descripciones y metadatos */
+
+  /* Colores de Estado / Utilidad */
+  --knect-success: #10B981;       /* Indicadores de "Abierto", calificaciones positivas */
+  --knect-warning: #F59E0B;       /* Alertas o calificaciones intermedias */
+  --knect-error: #EF4444;         /* Errores o estados cerrados */
+
+  /* Tipografía y Sombras Ambientales 2026 */
+  --knect-font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --knect-shadow-sm: 0 2px 8px -2px rgba(26, 54, 93, 0.05), 0 1px 2px -1px rgba(26, 54, 93, 0.03);
+  --knect-shadow-md: 0 12px 28px -6px rgba(26, 54, 93, 0.07), 0 4px 10px -3px rgba(26, 54, 93, 0.03);
+  --knect-shadow-lg: 0 20px 44px -10px rgba(26, 54, 93, 0.10), 0 8px 18px -6px rgba(26, 54, 93, 0.04);
+  --knect-shadow-xl: 0 28px 60px -12px rgba(26, 54, 93, 0.14);
+
+  /* Alias semánticos para compatibilidad transversal en componentes */
+  --color-primary: var(--knect-accent);
+  --color-primary-hover: var(--knect-accent-hover);
+  --color-primary-soft: rgba(0, 163, 255, 0.08);
+  --color-primary-ring: rgba(0, 163, 255, 0.18);
+  --color-accent: var(--knect-primary);
+  --color-accent-hover: var(--knect-primary-hover);
+  --color-accent-soft: var(--knect-bg-card);
+
+  --color-bg-canvas: var(--knect-bg-main);
+  --color-bg-surface: var(--knect-bg-main);
+  --color-bg-elevated: var(--knect-bg-card);
+  --color-bg-subtle: var(--knect-bg-card);
+  --color-bg-dark: var(--knect-primary);
+  --color-bg-dark-elevated: var(--knect-primary-hover);
+
+  --color-text-primary: var(--knect-text-main);
+  --color-text-secondary: var(--knect-text-muted);
+  --color-text-muted: var(--knect-text-muted);
+  --color-text-inverse: #FFFFFF;
+
+  --color-border-subtle: var(--knect-border);
+  --color-border-strong: #CBD5E1;
+
+  --color-success: var(--knect-success);
+  --color-success-soft: rgba(16, 185, 129, 0.10);
+  --color-success-text: #065F46;
+  --color-warning: var(--knect-warning);
+  --color-warning-soft: rgba(245, 158, 11, 0.12);
+  --color-warning-text: #92400E;
+  --color-danger: var(--knect-error);
+  --color-danger-soft: rgba(239, 68, 68, 0.10);
+  --color-danger-text: #991B1B;
+
+  /* Tipografía */
+  --font-sans: var(--knect-font-family);
+  --font-display: var(--knect-font-family);
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Escala Tipográfica Editorial 2026 */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 0.96875rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: clamp(1.4rem, 2.2vw, 1.75rem);
+  --text-3xl: clamp(1.75rem, 3vw, 2.35rem);
+  --text-4xl: clamp(2.25rem, 4.2vw, 3.4rem);
+
+  /* Espaciado (8pt Grid + Generous 2026 Whitespace) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4.5rem;
+  --space-20: 6rem;
+
+  /* Radios de Borde Orgánicos 2026 */
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-full: 9999px;
+
+  /* Sombras */
+  --shadow-xs: var(--knect-shadow-sm);
+  --shadow-sm: var(--knect-shadow-sm);
+  --shadow-md: var(--knect-shadow-md);
+  --shadow-lg: var(--knect-shadow-lg);
+  --shadow-xl: var(--knect-shadow-xl);
+  --shadow-primary: 0 8px 20px -4px rgba(0, 163, 255, 0.28);
+
+  /* Curvas de Animación Suaves (Spring-like 2026) */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 160ms;
+  --duration-base: 260ms;
+  --duration-slow: 420ms;
+
+  /* Layout */
+  --container-max: 1280px;
+  --header-height: 72px;
+  --touch-target: 44px;
+  --z-sticky: 1000;
+  --z-modal: 2000;
+}
+
+/* ============================================================================
+   RESET MODERNO Y BASE TIPOGRÁFICA MINIMALISTA
+   ============================================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--knect-font-family);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--knect-text-main);
+  background-color: var(--knect-bg-main);
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--knect-bg-main);
+  color: var(--knect-text-main);
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--knect-font-family);
+  color: var(--knect-primary);
+  font-weight: 700;
+  line-height: 1.18;
+  letter-spacing: -0.03em;
+}
+
+p {
+  color: var(--knect-text-muted);
+  line-height: 1.65;
+}
+
+a {
+  color: var(--knect-accent);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+a:hover {
+  color: var(--knect-accent-hover);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* Accesibilidad de Teclado (WCAG 2.1 AA) */
+:focus-visible {
+  outline: 2px solid var(--knect-accent);
+  outline-offset: 2px;
+}
+
+/* ============================================================================
+   CONTENEDOR ESTRUCTURAL Y UTILIDADES
+   ============================================================================ */
+.container,
+.knect-container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 4vw, 2.75rem);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================================
+   SISTEMA ATÓMICO DE BOTONES 2026 (Pill / Rounded-SM, Fitts's Law: 44px)
+   ============================================================================ */
+.btn,
+.btn-knect {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.65rem 1.35rem;
+  font-family: var(--knect-font-family);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  border-radius: var(--radius-full);
+  border: 1px solid transparent;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  text-decoration: none;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-out-expo),
+    box-shadow var(--duration-base) var(--ease-out-expo);
+}
+
+.btn:active:not(:disabled),
+.btn-knect:active:not(:disabled) {
+  transform: scale(0.985);
+}
+
+.btn:disabled,
+.btn-knect:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn-primary,
+.btn-knect-accent {
+  background-color: var(--knect-accent);
+  color: #FFFFFF;
+  box-shadow: var(--shadow-primary);
+}
+
+.btn-primary:hover:not(:disabled),
+.btn-knect-accent:hover:not(:disabled) {
+  background-color: var(--knect-accent-hover);
+  color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.btn-secondary,
+.btn-knect-primary {
+  background-color: var(--knect-primary);
+  color: #FFFFFF;
+  border-color: var(--knect-primary);
+}
+
+.btn-secondary:hover:not(:disabled),
+.btn-knect-primary:hover:not(:disabled) {
+  background-color: var(--knect-primary-hover);
+  border-color: var(--knect-primary-hover);
+  color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.btn-outline,
+.btn-knect-outline {
+  background-color: #FFFFFF;
+  color: var(--knect-primary);
+  border: 1px solid var(--knect-border);
+}
+
+.btn-outline:hover:not(:disabled),
+.btn-knect-outline:hover:not(:disabled) {
+  border-color: var(--knect-accent);
+  color: var(--knect-accent);
+  background-color: rgba(0, 163, 255, 0.04);
+}
+
+.btn-knect-whatsapp {
+  background-color: var(--knect-success);
+  color: #FFFFFF;
+  border-color: var(--knect-success);
+}
+
+.btn-knect-whatsapp:hover:not(:disabled) {
+  background-color: #059669;
+  color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--knect-text-muted);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background-color: var(--knect-bg-card);
+  color: var(--knect-primary);
+}
+
+.btn-danger,
+.btn-knect-danger {
+  background-color: var(--knect-error);
+  color: #FFFFFF;
+}
+
+.btn-danger:hover:not(:disabled),
+.btn-knect-danger:hover:not(:disabled) {
+  background-color: #DC2626;
+}
+
+.btn-sm {
+  min-height: 38px;
+  padding: 0.45rem 1rem;
+  font-size: 0.8125rem;
+}
+
+.btn-lg {
+  min-height: 50px;
+  padding: 0.85rem 1.85rem;
+  font-size: 0.95rem;
+}
+
+.btn-block,
+.btn-full {
+  width: 100%;
+}
+
+.knect-card-white {
+  background: var(--knect-bg-main);
+  border: 1px solid var(--knect-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--knect-shadow-sm);
+}
+
+/* Breadcrumb Minimalista 2026 (Pill) */
+.unal-hero-breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--knect-text-muted);
+  background: #FFFFFF;
+  padding: 0.35rem 0.9rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--knect-border);
+  box-shadow: var(--knect-shadow-sm);
+}
+
+.unal-hero-breadcrumb a {
+  color: var(--knect-primary);
+  font-weight: 600;
+}
+
+.unal-hero-breadcrumb a:hover {
+  color: var(--knect-accent);
+}
+
+.unal-hero-breadcrumb .crumb-active {
+  color: var(--knect-accent);
+  font-weight: 600;
+}
+
+.skeleton-card {
+  height: 380px;
+  border-radius: var(--radius-md);
+}
+
+/* ============================================================================
+   CONTROLES DE FORMULARIO Y SELECTORES ESTILIZADOS 2026
+   ============================================================================ */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.15rem;
+}
+
+.form-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--knect-primary);
+  letter-spacing: -0.01em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.form-label i {
+  color: var(--knect-accent);
+  font-size: 0.82rem;
+}
+
+.form-control {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.65rem 1rem;
+  font-size: 0.925rem;
+  color: var(--knect-text-main);
+  background-color: var(--knect-bg-card);
+  border: 1px solid var(--knect-border);
+  border-radius: var(--radius-sm);
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+.form-control::placeholder {
+  color: var(--knect-text-muted);
+  opacity: 0.7;
+}
+
+.form-control:hover:not(:disabled) {
+  border-color: #CBD5E1;
+  background-color: #FFFFFF;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--knect-accent);
+  box-shadow: 0 0 0 3px var(--color-primary-ring);
+  background-color: #FFFFFF;
+}
+
+/* Estilo unificado minimalista para TODOS los elementos <select> */
+select,
+select.form-control,
+select.bo-input {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  padding-right: 2.5rem !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231A365D' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  background-size: 15px 15px;
+}
+
+select:focus,
+select.form-control:focus,
+select.bo-input:focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2300A3FF' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+select option {
+  color: var(--knect-text-main);
+  background-color: #FFFFFF;
+  padding: 0.5rem;
+}
+
+textarea.form-control {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.form-error {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--knect-error);
+  margin-top: 0.15rem;
+}
+
+.form-hint {
+  font-size: 0.8rem;
+  color: var(--knect-text-muted);
+}
+
+/* ============================================================================
+   LAYOUT DE AUTENTICACIÓN MINIMALISTA 2026 (LOGIN / REGISTER)
+   ============================================================================ */
+.auth-page {
+  min-height: calc(100vh - var(--header-height));
+  padding: 4rem 0;
+  display: flex;
+  align-items: center;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(0, 163, 255, 0.07) 0%, transparent 45%),
+    radial-gradient(circle at 85% 85%, rgba(26, 54, 93, 0.05) 0%, transparent 45%),
+    var(--knect-bg-card);
+}
+
+.auth-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  max-width: 960px;
+  margin-inline: auto;
+  align-items: stretch;
+}
+
+@media (min-width: 860px) {
+  .auth-layout {
+    grid-template-columns: 1fr 1.15fr;
+  }
+}
+
+.auth-aside {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3rem;
+  border-radius: var(--radius-lg);
+  background: var(--knect-primary);
+  color: #FFFFFF;
+  box-shadow: var(--knect-shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-aside::before {
+  content: '';
+  position: absolute;
+  top: -30%;
+  right: -30%;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 163, 255, 0.28) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+@media (min-width: 860px) {
+  .auth-aside {
+    display: flex;
+  }
+}
+
+.aside-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  object-fit: contain;
+  background: #ffffff;
+  padding: 4px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.auth-aside h2 {
+  color: #FFFFFF;
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.75rem;
+}
+
+.auth-aside p {
+  color: #CBD5E1;
+  font-size: 0.95rem;
+  margin-bottom: 1.75rem;
+}
+
+.auth-aside ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.auth-aside ul li {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.9rem;
+  color: #E2E8F0;
+  font-weight: 500;
+}
+
+.auth-aside ul li i {
+  color: var(--knect-accent);
+}
+
+.auth-card {
+  padding: 2.75rem 2.5rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--knect-border);
+  background: var(--knect-bg-main);
+  box-shadow: var(--knect-shadow-md);
+}
+
+.auth-logo-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  object-fit: contain;
+  background: #ffffff;
+  padding: 4px;
+  margin: 0 auto 1rem;
+  box-shadow: var(--knect-shadow-sm);
+}
+
+.auth-logo-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--knect-primary);
+  margin-bottom: 0.3rem;
+}
+
+.auth-logo-header p {
+  font-size: 0.9rem;
+  color: var(--knect-text-muted);
+}
+
+.password-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-field .form-control,
+.password-field .bo-input {
+  padding-right: 2.85rem;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0.5rem;
+  background: transparent;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  color: var(--knect-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-toggle:hover {
+  color: var(--knect-accent);
+  background: var(--knect-bg-card);
+}
+
+.auth-footer-text {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--knect-text-muted);
+}
+
+.auth-footer-text a {
+  font-weight: 600;
+  color: var(--knect-accent);
+}
+
+/* ============================================================================
+   TARJETAS Y BADGES SEMÁNTICOS MINIMALISTAS
+   ============================================================================ */
+.card {
+  background-color: var(--knect-bg-main);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--knect-border);
+  box-shadow: var(--knect-shadow-sm);
+  overflow: hidden;
+  transition:
+    transform var(--duration-base) var(--ease-out-expo),
+    box-shadow var(--duration-base) var(--ease-out-expo),
+    border-color var(--duration-base) var(--ease-standard);
+}
+
+.card-interactive:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--knect-shadow-lg);
+  border-color: rgba(0, 163, 255, 0.45);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.28rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+}
+
+.badge-primary {
+  background-color: rgba(0, 163, 255, 0.10);
+  color: var(--knect-accent-hover);
+}
+
+.badge-accent {
+  background-color: var(--knect-bg-card);
+  color: var(--knect-primary);
+}
+
+.badge-success {
+  background-color: var(--color-success-soft);
+  color: var(--color-success-text);
+}
+
+.badge-warning {
+  background-color: var(--color-warning-soft);
+  color: var(--color-warning-text);
+}
+
+.badge-danger {
+  background-color: var(--color-danger-soft);
+  color: var(--color-danger-text);
+}
+
+/* ============================================================================
+   ESTADOS DE INTERFAZ Y SKELETONS
+   ============================================================================ */
+@keyframes knect-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #F4F6F9 25%, #E2E8F0 50%, #F4F6F9 75%);
+  background-size: 200% 100%;
+  animation: knect-shimmer 1.6s infinite linear;
+  border-radius: var(--radius-md);
+}
+
+.alert-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.2rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+}
+
+.alert-success {
+  background-color: var(--color-success-soft);
+  color: var(--color-success-text);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.alert-error {
+  background-color: var(--color-danger-soft);
+  color: var(--color-danger-text);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+/* ============================================================================
+   BACKOFFICE 2026 (ESTILO LINEAR / STRIPE / VERCEL — CLEAN WORKSPACE)
+   ============================================================================ */
+.bo-shell,
+.bo-layout {
+  display: grid;
+  grid-template-columns: 268px 1fr;
+  min-height: calc(100vh - var(--header-height));
+  background: var(--knect-bg-card);
+}
+
+.bo-sidebar {
+  background: #FFFFFF;
+  color: var(--knect-primary);
+  padding: 1.5rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid var(--knect-border);
+}
+
+.bo-brand-head {
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--knect-border);
+  margin-bottom: 1.25rem;
+}
+
+.bo-role-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(0, 163, 255, 0.10);
+  color: var(--knect-accent-hover);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  margin-bottom: 0.5rem;
+}
+
+.bo-brand-head h2 {
+  color: var(--knect-primary);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+
+.bo-brand-head p {
+  color: var(--knect-text-muted);
+  font-size: 0.8rem;
+}
+
+.bo-nav,
+.bo-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+}
+
+.bo-nav-btn,
+.bo-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 42px;
+  padding: 0.65rem 0.9rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--knect-text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--duration-fast) var(--ease-standard);
+}
+
+.bo-nav-btn i,
+.bo-menu-item i,
+.bo-menu-icon {
+  width: 20px;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--knect-text-muted);
+  transition: color var(--duration-fast) var(--ease-standard);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bo-nav-btn:hover,
+.bo-menu-item:hover {
+  background: var(--knect-bg-card);
+  color: var(--knect-primary);
+}
+
+.bo-nav-btn:hover i,
+.bo-menu-item:hover i,
+.bo-menu-item:hover .bo-menu-icon {
+  color: var(--knect-accent);
+}
+
+.bo-nav-btn.active,
+.bo-menu-item.active {
+  background: rgba(0, 163, 255, 0.08);
+  border-color: rgba(0, 163, 255, 0.22);
+  color: var(--knect-primary);
+  font-weight: 600;
+}
+
+.bo-nav-btn.active i,
+.bo-menu-item.active i,
+.bo-menu-item.active .bo-menu-icon {
+  color: var(--knect-accent);
+}
+
+.bo-sidebar-footer {
+  padding-top: 1.25rem;
+  margin-top: 1.25rem;
+  border-top: 1px solid var(--knect-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.bo-main {
+  padding: 2.25rem clamp(1.5rem, 3.5vw, 3rem);
+  overflow-x: hidden;
+}
+
+.bo-page-header,
+.bo-header-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--knect-border);
+}
+
+.bo-breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--knect-text-muted);
+  margin-top: 0.35rem;
+}
+
+.bo-breadcrumb i {
+  color: var(--knect-accent);
+  font-size: 0.72rem;
+}
+
+.bo-breadcrumb a {
+  color: var(--knect-accent);
+}
+
+.bo-page-header h1,
+.bo-title {
+  font-size: clamp(1.45rem, 2.2vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--knect-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0;
+}
+
+.bo-page-header h1 i,
+.bo-title i {
+  color: var(--knect-accent);
+  font-size: 1.25rem;
+}
+
+.bo-page-header p {
+  font-size: 0.9rem;
+  color: var(--knect-text-muted);
+  margin-top: 0.2rem;
+}
+
+/* Botones BackOffice Minimalistas 2026 */
+.bo-btn-new,
+.bo-btn-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 42px;
+  padding: 0.6rem 1.35rem;
+  background-color: var(--knect-accent);
+  color: #FFFFFF;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--knect-accent);
+  cursor: pointer;
+  box-shadow: var(--shadow-primary);
+  transition: all var(--duration-fast) var(--ease-standard);
+  text-decoration: none;
+}
+
+.bo-btn-new:hover:not(:disabled),
+.bo-btn-save:hover:not(:disabled) {
+  background-color: var(--knect-accent-hover);
+  border-color: var(--knect-accent-hover);
+  color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.bo-btn-new:disabled,
+.bo-btn-save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.bo-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 42px;
+  padding: 0.6rem 1.25rem;
+  background-color: #FFFFFF;
+  color: var(--knect-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--knect-border);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--duration-fast) var(--ease-standard);
+}
+
+.bo-btn-secondary:hover:not(:disabled) {
+  border-color: var(--knect-accent);
+  color: var(--knect-accent);
+  background-color: rgba(0, 163, 255, 0.04);
+}
+
+.bo-btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 42px;
+  padding: 0.6rem 1.25rem;
+  background-color: var(--knect-error);
+  color: #FFFFFF;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--knect-error);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-standard);
+}
+
+.bo-btn-danger:hover:not(:disabled) {
+  background-color: #DC2626;
+}
+
+/* Bento Cards de BackOffice */
+.bo-card,
+.bo-section-card {
+  background: #FFFFFF;
+  border: 1px solid var(--knect-border);
+  border-radius: var(--radius-md);
+  padding: 1.75rem;
+  box-shadow: var(--knect-shadow-sm);
+  margin-bottom: 1.5rem;
+}
+
+.bo-card-title,
+.bo-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--knect-primary);
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--knect-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.bo-card-title i,
+.bo-section-title i {
+  color: var(--knect-accent);
+  margin-right: 0.35rem;
+}
+
+.bo-table-wrap {
+  overflow-x: auto;
+  background: #FFFFFF;
+  border: 1px solid var(--knect-border);
+  border-radius: var(--radius-sm);
+}
+
+.bo-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.bo-table th {
+  background: var(--knect-bg-card);
+  color: var(--knect-text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-align: left;
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid var(--knect-border);
+}
+
+.bo-table td {
+  padding: 0.95rem 1.1rem;
+  border-bottom: 1px solid var(--knect-border);
+  color: var(--knect-text-main);
+  vertical-align: middle;
+}
+
+.bo-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.bo-table tr:hover td {
+  background: rgba(244, 246, 249, 0.65);
+}
+
+.bo-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.bo-action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--knect-border);
+  background: #FFFFFF;
+  color: var(--knect-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-standard);
+}
+
+.bo-action-btn:hover {
+  border-color: var(--knect-accent);
+  color: var(--knect-accent);
+  background: rgba(0, 163, 255, 0.06);
+}
+
+.bo-action-btn.delete:hover {
+  border-color: var(--knect-error);
+  color: var(--knect-error);
+  background: rgba(239, 68, 68, 0.06);
+}
+
+/* Toggle Switch Minimalista */
+.bo-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.bo-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.bo-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #CBD5E1;
+  transition: 0.25s;
+  border-radius: 999px;
+}
+
+.bo-slider::before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #FFFFFF;
+  transition: 0.25s;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.bo-switch input:checked + .bo-slider {
+  background-color: var(--knect-accent);
+}
+
+.bo-switch input:checked + .bo-slider::before {
+  transform: translateX(20px);
+}
+
+.bo-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1.1rem;
+}
+
+.bo-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.bo-field label,
+.bo-field-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--knect-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.35rem;
+}
+
+.bo-field label i,
+.bo-field-label i {
+  color: var(--knect-accent);
+  font-size: 0.8rem;
+}
+
+.bo-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.6rem 0.95rem;
+  border: 1px solid var(--knect-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  background: var(--knect-bg-card);
+  color: var(--knect-text-main);
+  transition: border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard);
+}
+
+.bo-input:hover:not(:disabled) {
+  border-color: #CBD5E1;
+  background: #FFFFFF;
+}
+
+.bo-input:focus {
+  outline: none;
+  border-color: var(--knect-accent);
+  box-shadow: 0 0 0 3px var(--color-primary-ring);
+  background: #FFFFFF;
+}
+
+textarea.bo-input {
+  min-height: 96px;
+  resize: vertical;
+}
+
+/* Media Dropzones Minimalistas */
+.bo-media-box {
+  border: 1.5px dashed var(--knect-border);
+  border-radius: var(--radius-md);
+  background: var(--knect-bg-card);
+  padding: 1.35rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-standard);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 150px;
+}
+
+.bo-media-box:hover {
+  border-color: var(--knect-accent);
+  background: rgba(0, 163, 255, 0.03);
+}
+
+/* Modal de confirmación Minimalista 2026 */
+.unal-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 54, 93, 0.45);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal);
+  padding: 1.25rem;
+}
+
+.unal-modal-card {
+  background: #FFFFFF;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--knect-border);
+  padding: 2rem;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+  box-shadow: var(--knect-shadow-xl);
+}
+
+.unal-modal-card h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--knect-primary);
+  margin-bottom: 0.5rem;
+}
+
+.unal-modal-card p {
+  font-size: 0.9rem;
+  color: var(--knect-text-muted);
+}
+
+@media (max-width: 960px) {
+  .bo-shell,
+  .bo-layout {
+    grid-template-columns: 1fr;
+  }
+}

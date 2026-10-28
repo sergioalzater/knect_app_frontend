@@ -1,0 +1,241 @@
+<section class="auth-page">
+  <div class="knect-container">
+    <div class="auth-layout">
+      <aside class="auth-aside" aria-hidden="true">
+        <img src="/logo-knect.svg" alt="" class="aside-logo" width="56" height="56" />
+        <h2>{{ i18n.t('auth.asideTitle') }}</h2>
+        <p>{{ i18n.t('auth.asideText') }}</p>
+        <ul>
+          <li><i class="fa-solid fa-circle-check"></i> {{ i18n.t('auth.asideBullet1') }}</li>
+          <li><i class="fa-solid fa-circle-check"></i> {{ i18n.t('auth.asideBullet2') }}</li>
+          <li><i class="fa-solid fa-circle-check"></i> {{ i18n.t('auth.asideBullet3') }}</li>
+        </ul>
+      </aside>
+
+      <div class="knect-card-white auth-card">
+        <div class="auth-logo-header">
+          <img src="/logo-knect.svg" alt="" class="auth-logo" width="64" height="64" />
+          <h1>{{ isRecoverMode() ? i18n.t('auth.recoverTitle') : i18n.t('auth.loginTitle') }}</h1>
+          <p>{{ i18n.t('auth.loginSubtitle') }}</p>
+        </div>
+
+        @if (error()) {
+          <div class="alert-banner alert-error" role="alert">
+            <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+            <span>{{ error() }}</span>
+          </div>
+        }
+        @if (infoMsg()) {
+          <div class="alert-banner alert-success" role="status">
+            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+            <span>{{ infoMsg() }}</span>
+          </div>
+        }
+
+        @if (!isRecoverMode()) {
+          <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="login-email">
+                <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                {{ i18n.t('auth.email') }}
+              </label>
+              <input
+                id="login-email"
+                type="email"
+                inputmode="email"
+                class="form-control"
+                [(ngModel)]="email"
+                name="email"
+                #emailCtl="ngModel"
+                required
+                email
+                autocomplete="email"
+                autocapitalize="none"
+                spellcheck="false"
+                placeholder="usuario@knect.com"
+                [attr.aria-invalid]="emailCtl.invalid && (emailCtl.touched || submitted())"
+                [attr.aria-describedby]="emailCtl.invalid && (emailCtl.touched || submitted()) ? 'login-email-error' : null"
+              />
+              @if (emailCtl.invalid && (emailCtl.touched || submitted())) {
+                <p id="login-email-error" class="form-error" role="alert">
+                  {{ emailCtl.errors?.['required'] ? i18n.t('auth.errEmailRequired') : i18n.t('auth.errEmailInvalid') }}
+                </p>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="login-password">
+                <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                {{ i18n.t('auth.password') }}
+              </label>
+              <div class="password-field">
+                <input
+                  id="login-password"
+                  [type]="showPassword() ? 'text' : 'password'"
+                  class="form-control"
+                  [(ngModel)]="password"
+                  name="password"
+                  #passwordCtl="ngModel"
+                  required
+                  autocomplete="current-password"
+                  placeholder="••••••••"
+                  [attr.aria-invalid]="passwordCtl.invalid && (passwordCtl.touched || submitted())"
+                  [attr.aria-describedby]="passwordCtl.invalid && (passwordCtl.touched || submitted()) ? 'login-password-error' : null"
+                />
+                <button
+                  type="button"
+                  class="password-toggle"
+                  (click)="togglePassword()"
+                  [attr.aria-label]="showPassword() ? i18n.t('auth.hidePassword') : i18n.t('auth.showPassword')"
+                  [attr.aria-pressed]="showPassword()"
+                >
+                  <i class="fa-solid" [class.fa-eye-slash]="showPassword()" [class.fa-eye]="!showPassword()" aria-hidden="true"></i>
+                </button>
+              </div>
+              @if (passwordCtl.invalid && (passwordCtl.touched || submitted())) {
+                <p id="login-password-error" class="form-error" role="alert">
+                  {{ i18n.t('auth.errPasswordRequired') }}
+                </p>
+              }
+            </div>
+
+            <div class="forgot-row">
+              <button type="button" class="link-btn" (click)="setRecoverMode(true)">
+                {{ i18n.t('auth.forgot') }}
+              </button>
+            </div>
+
+            <button type="submit" class="btn-knect btn-knect-accent btn-lg btn-full" [attr.aria-busy]="isLoading()">
+              <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>
+              <span>{{ i18n.t('nav.login') }}</span>
+            </button>
+            @if (isLoading()) {
+              <span class="sr-only" role="status">{{ i18n.t('auth.loggingIn') }}</span>
+            }
+          </form>
+
+          @if (showDemoAccounts) {
+            <details class="demo-roles-box" open>
+              <summary class="demo-label">
+                <i class="fa-solid fa-key" aria-hidden="true"></i>
+                {{ i18n.t('auth.demoTitle') }}
+              </summary>
+              <p class="demo-hint">{{ i18n.t('auth.demoQuickAccess') }}</p>
+              <div class="demo-buttons">
+                <button
+                  type="button"
+                  class="btn-demo"
+                  (click)="quickDemoLogin('admin@knect.com', 'Admin123*')"
+                >
+                  <strong><i class="fa-solid fa-gauge-high"></i> Super Admin</strong>
+                  <small>admin&#64;knect.com</small>
+                </button>
+                <button
+                  type="button"
+                  class="btn-demo"
+                  (click)="quickDemoLogin('marca@knect.com', 'Marca123*')"
+                >
+                  <strong><i class="fa-solid fa-store"></i> Admin de Local</strong>
+                  <small>marca&#64;knect.com</small>
+                </button>
+                <button
+                  type="button"
+                  class="btn-demo"
+                  (click)="quickDemoLogin('cliente@knect.com', 'Cliente123*')"
+                >
+                  <strong><i class="fa-solid fa-user"></i> Cliente</strong>
+                  <small>cliente&#64;knect.com</small>
+                </button>
+              </div>
+            </details>
+          }
+        } @else {
+          <form #recoverForm="ngForm" (ngSubmit)="onRecoverPassword(recoverForm)" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="recover-email">
+                <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                {{ i18n.t('auth.emailRegistered') }}
+              </label>
+              <input
+                id="recover-email"
+                type="email"
+                inputmode="email"
+                class="form-control"
+                [(ngModel)]="email"
+                name="recoverEmail"
+                #recoverEmailCtl="ngModel"
+                required
+                email
+                autocomplete="email"
+                autocapitalize="none"
+                spellcheck="false"
+                placeholder="usuario@knect.com"
+                [attr.aria-invalid]="recoverEmailCtl.invalid && (recoverEmailCtl.touched || submitted())"
+                [attr.aria-describedby]="recoverEmailCtl.invalid && (recoverEmailCtl.touched || submitted()) ? 'recover-email-error' : null"
+              />
+              @if (recoverEmailCtl.invalid && (recoverEmailCtl.touched || submitted())) {
+                <p id="recover-email-error" class="form-error" role="alert">
+                  {{ recoverEmailCtl.errors?.['required'] ? i18n.t('auth.errEmailRequired') : i18n.t('auth.errEmailInvalid') }}
+                </p>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="recover-password">
+                <i class="fa-solid fa-key" aria-hidden="true"></i>
+                {{ i18n.t('auth.newPassword') }}
+              </label>
+              <div class="password-field">
+                <input
+                  id="recover-password"
+                  [type]="showPassword() ? 'text' : 'password'"
+                  class="form-control"
+                  [(ngModel)]="newRecoveryPassword"
+                  name="newRecoveryPassword"
+                  #recoverPwCtl="ngModel"
+                  required
+                  minlength="6"
+                  autocomplete="new-password"
+                  [placeholder]="i18n.t('auth.newPasswordPlaceholder')"
+                  [attr.aria-invalid]="recoverPwCtl.invalid && (recoverPwCtl.touched || submitted())"
+                  [attr.aria-describedby]="recoverPwCtl.invalid && (recoverPwCtl.touched || submitted()) ? 'recover-password-error' : null"
+                />
+                <button
+                  type="button"
+                  class="password-toggle"
+                  (click)="togglePassword()"
+                  [attr.aria-label]="showPassword() ? i18n.t('auth.hidePassword') : i18n.t('auth.showPassword')"
+                  [attr.aria-pressed]="showPassword()"
+                >
+                  <i class="fa-solid" [class.fa-eye-slash]="showPassword()" [class.fa-eye]="!showPassword()" aria-hidden="true"></i>
+                </button>
+              </div>
+              @if (recoverPwCtl.invalid && (recoverPwCtl.touched || submitted())) {
+                <p id="recover-password-error" class="form-error" role="alert">
+                  {{ i18n.t('auth.errPasswordMin') }}
+                </p>
+              }
+            </div>
+
+            <button type="submit" class="btn-knect btn-knect-accent btn-lg btn-full" [attr.aria-busy]="isLoading()">
+              <i class="fa-solid fa-rotate" aria-hidden="true"></i>
+              <span>{{ i18n.t('auth.updatePassword') }}</span>
+            </button>
+            @if (isLoading()) {
+              <span class="sr-only" role="status">{{ i18n.t('auth.updating') }}</span>
+            }
+            <button type="button" class="btn-knect btn-knect-outline btn-full back-btn" (click)="setRecoverMode(false)">
+              <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+              <span>{{ i18n.t('auth.backToLogin') }}</span>
+            </button>
+          </form>
+        }
+
+        <p class="auth-footer-text">
+          {{ i18n.t('auth.noAccount') }}
+          <a routerLink="/auth/register">{{ i18n.t('auth.signUpHere') }}</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

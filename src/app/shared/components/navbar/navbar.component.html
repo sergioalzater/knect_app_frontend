@@ -1,0 +1,115 @@
+<header class="knect-header" [class.scrolled]="scrolled()">
+  <div class="knect-main-nav">
+    <div class="knect-container navbar-inner">
+      <a routerLink="/" class="navbar-brand" (click)="closeMenu()" [attr.aria-label]="'Knect – ' + i18n.t('nav.home')">
+        <img src="/logo-knect.svg" alt="" class="brand-logo" width="44" height="44" />
+        <div class="brand-text">
+          <span class="brand-title">Knect</span>
+          <span class="brand-subdomain">directorio.knect.co</span>
+        </div>
+      </a>
+
+      <!-- Buscador rápido integrado -->
+      <form class="knect-search-form" (ngSubmit)="onQuickSearch()" role="search">
+        <label for="navbar-quick-search" class="sr-only">{{ i18n.t('home.searchPlaceholder') }}</label>
+        <i class="fa-solid fa-magnifying-glass search-icon" aria-hidden="true"></i>
+        <input
+          id="navbar-quick-search"
+          type="search"
+          name="quickSearch"
+          [(ngModel)]="quickSearch"
+          [placeholder]="i18n.lang() === 'es' ? 'Buscar restaurante o local...' : 'Search restaurant or shop...'"
+        />
+        <button type="submit" [attr.aria-label]="i18n.t('home.searchBtn')">
+          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </button>
+      </form>
+
+      <div class="navbar-actions-mobile">
+        <button
+          type="button"
+          class="lang-switcher"
+          (click)="i18n.toggleLang()"
+          [attr.aria-label]="i18n.lang() === 'es' ? i18n.t('nav.switchToEn') : i18n.t('nav.switchToEs')"
+        >
+          <i class="fa-solid fa-globe" aria-hidden="true"></i>
+          <span aria-hidden="true" [class.active-lang]="i18n.lang() === 'es'">ES</span>
+          <span aria-hidden="true" class="lang-sep">/</span>
+          <span aria-hidden="true" [class.active-lang]="i18n.lang() === 'en'">EN</span>
+        </button>
+
+        <button
+          #toggleBtn
+          type="button"
+          class="mobile-toggle"
+          [class.is-open]="mobileMenuOpen()"
+          (click)="toggleMenu()"
+          aria-controls="primary-navigation"
+          [attr.aria-expanded]="mobileMenuOpen()"
+          [attr.aria-label]="mobileMenuOpen() ? i18n.t('nav.closeMenu') : i18n.t('nav.openMenu')"
+        >
+          <i class="fa-solid" [class.fa-bars]="!mobileMenuOpen()" [class.fa-xmark]="mobileMenuOpen()" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <nav id="primary-navigation" class="navbar-links" [class.open]="mobileMenuOpen()" [attr.aria-label]="i18n.t('nav.mainLabel')">
+        <a routerLink="/" routerLinkActive="active" ariaCurrentWhenActive="page" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()">
+          <i class="fa-solid fa-house" aria-hidden="true"></i>
+          <span>{{ i18n.t('nav.home') }}</span>
+        </a>
+        <a routerLink="/businesses" routerLinkActive="active" ariaCurrentWhenActive="page" (click)="closeMenu()">
+          <i class="fa-solid fa-store" aria-hidden="true"></i>
+          <span>{{ i18n.lang() === 'es' ? 'Restaurantes y Locales' : 'Restaurants & Places' }}</span>
+        </a>
+        <a routerLink="/blog" routerLinkActive="active" ariaCurrentWhenActive="page" (click)="closeMenu()">
+          <i class="fa-solid fa-newspaper" aria-hidden="true"></i>
+          <span>{{ i18n.lang() === 'es' ? 'Notas de Interés' : 'News & Notes' }}</span>
+        </a>
+
+        @if (authService.isLoggedIn()) {
+          @if (authService.isSuperAdmin()) {
+            <a routerLink="/super-admin" routerLinkActive="active" ariaCurrentWhenActive="page" class="nav-pill nav-pill-admin" (click)="closeMenu()">
+              <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
+              <span>{{ i18n.lang() === 'es' ? 'BackOffice Global' : 'Global BackOffice' }}</span>
+            </a>
+          }
+          @if (authService.isBusinessAdmin()) {
+            <a routerLink="/brand-admin" routerLinkActive="active" ariaCurrentWhenActive="page" class="nav-pill nav-pill-brand" (click)="closeMenu()">
+              <i class="fa-solid fa-building-user" aria-hidden="true"></i>
+              <span>{{ i18n.lang() === 'es' ? 'BackOffice Mi Local' : 'My Business Panel' }}</span>
+            </a>
+          }
+          <a routerLink="/dashboard" routerLinkActive="active" ariaCurrentWhenActive="page" class="nav-pill nav-pill-client" (click)="closeMenu()">
+            <i class="fa-solid fa-circle-user" aria-hidden="true"></i>
+            <span>{{ authService.user()?.name }}</span>
+          </a>
+          <button type="button" (click)="authService.logout(); closeMenu()" class="btn-nav-logout">
+            <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
+            <span>{{ i18n.t('nav.logout') }}</span>
+          </button>
+        } @else {
+          <a routerLink="/auth/login" routerLinkActive="active" ariaCurrentWhenActive="page" (click)="closeMenu()">
+            <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>
+            <span>{{ i18n.t('nav.login') }}</span>
+          </a>
+          <a routerLink="/auth/register" class="btn-nav-register" (click)="closeMenu()">
+            <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+            <span>{{ i18n.t('nav.register') }}</span>
+          </a>
+        }
+
+        <button
+          type="button"
+          class="lang-switcher lang-switcher-desktop"
+          (click)="i18n.toggleLang()"
+          [attr.aria-label]="i18n.lang() === 'es' ? i18n.t('nav.switchToEn') : i18n.t('nav.switchToEs')"
+        >
+          <i class="fa-solid fa-globe" aria-hidden="true"></i>
+          <span aria-hidden="true" [class.active-lang]="i18n.lang() === 'es'">ES</span>
+          <span aria-hidden="true" class="lang-sep">/</span>
+          <span aria-hidden="true" [class.active-lang]="i18n.lang() === 'en'">EN</span>
+        </button>
+      </nav>
+    </div>
+  </div>
+</header>

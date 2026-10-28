@@ -1,0 +1,124 @@
+.unal-footer {
+  background: var(--knect-bg-main);
+  color: var(--knect-primary);
+  padding: 4rem 0 0;
+  border-top: 1px solid var(--knect-border);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  padding-bottom: 3rem;
+}
+
+@media (min-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1.8fr 1fr 1fr;
+  }
+}
+
+.footer-logo-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.footer-logo {
+  height: 42px;
+  width: 42px;
+  border-radius: 12px;
+  object-fit: contain;
+  background: #ffffff;
+  padding: 3px;
+  border: 1px solid var(--knect-border);
+  box-shadow: var(--knect-shadow-sm);
+}
+
+.footer-brand h3 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--knect-primary);
+  letter-spacing: -0.03em;
+}
+
+.footer-brand p {
+  font-size: 0.78rem;
+  color: var(--knect-accent);
+  font-weight: 600;
+}
+
+.footer-desc {
+  margin-top: 0.5rem;
+  max-width: 420px;
+  color: var(--knect-text-muted) !important;
+  font-size: 0.9rem !important;
+  line-height: 1.65;
+}
+
+.footer-links h4 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--knect-primary);
+  letter-spacing: 0.02em;
+  margin-bottom: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.footer-links h4 i {
+  color: var(--knect-accent);
+}
+
+.footer-links a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 34px;
+  color: var(--knect-text-muted);
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.footer-links a i {
+  font-size: 0.68rem;
+  color: var(--knect-accent);
+  opacity: 0.7;
+}
+
+.footer-links a:hover {
+  color: var(--knect-primary);
+  transform: translateX(3px);
+}
+
+.footer-bottom-bar {
+  background: var(--knect-bg-card);
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--knect-border);
+}
+
+.footer-bottom-inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--knect-text-muted);
+}
+
+.footer-support {
+  color: var(--knect-primary);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.footer-support i {
+  color: var(--knect-accent);
+}

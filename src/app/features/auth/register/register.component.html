@@ -1,0 +1,200 @@
+<section class="auth-page">
+  <div class="knect-container">
+    <div class="auth-layout">
+      <aside class="auth-aside" aria-hidden="true">
+        <img src="/logo-knect.svg" alt="" class="aside-logo" width="56" height="56" />
+        <h2>{{ i18n.t('auth.asideTitle') }}</h2>
+        <p>{{ i18n.t('auth.asideText') }}</p>
+        <ul>
+          <li><i class="fa-solid fa-circle-check"></i> {{ i18n.t('auth.asideBullet1') }}</li>
+          <li><i class="fa-solid fa-circle-check"></i> {{ i18n.t('auth.asideBullet2') }}</li>
+          <li><i class="fa-solid fa-circle-check"></i> {{ i18n.t('auth.asideBullet3') }}</li>
+        </ul>
+      </aside>
+
+      <div class="knect-card-white auth-card">
+        <div class="auth-logo-header">
+          <img src="/logo-knect.svg" alt="" class="auth-logo" width="64" height="64" />
+          <h1>{{ i18n.t('auth.registerTitle') }}</h1>
+          <p>{{ i18n.t('auth.registerSubtitle') }}</p>
+        </div>
+
+        @if (error()) {
+          <div class="alert-banner alert-error" role="alert">
+            <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+            <span>{{ error() }}</span>
+          </div>
+        }
+
+        <form #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="reg-name">
+                <i class="fa-solid fa-user" aria-hidden="true"></i>
+                {{ i18n.t('auth.name') }} *
+              </label>
+              <input
+                id="reg-name"
+                type="text"
+                class="form-control"
+                [(ngModel)]="name"
+                name="name"
+                #nameCtl="ngModel"
+                required
+                autocomplete="given-name"
+                [placeholder]="i18n.t('auth.namePlaceholder')"
+                [attr.aria-invalid]="nameCtl.invalid && (nameCtl.touched || submitted())"
+                [attr.aria-describedby]="nameCtl.invalid && (nameCtl.touched || submitted()) ? 'reg-name-error' : null"
+              />
+              @if (nameCtl.invalid && (nameCtl.touched || submitted())) {
+                <p id="reg-name-error" class="form-error" role="alert">{{ i18n.t('auth.errNameRequired') }}</p>
+              }
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="reg-lastname">
+                <i class="fa-solid fa-user-tag" aria-hidden="true"></i>
+                {{ i18n.t('auth.lastName') }} <span class="optional-tag">{{ i18n.t('auth.optional') }}</span>
+              </label>
+              <input
+                id="reg-lastname"
+                type="text"
+                class="form-control"
+                [(ngModel)]="lastName"
+                name="lastName"
+                autocomplete="family-name"
+                [placeholder]="i18n.t('auth.lastNamePlaceholder')"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="reg-phone">
+                <i class="fa-solid fa-phone" aria-hidden="true"></i>
+                {{ i18n.t('auth.phone') }} <span class="optional-tag">{{ i18n.t('auth.optional') }}</span>
+              </label>
+              <input
+                id="reg-phone"
+                type="tel"
+                inputmode="tel"
+                class="form-control"
+                [(ngModel)]="phone"
+                name="phone"
+                autocomplete="tel"
+                placeholder="+57 300 000 0000"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="reg-role">
+                <i class="fa-solid fa-id-badge" aria-hidden="true"></i>
+                {{ i18n.t('auth.accountType') }}
+              </label>
+              <select
+                id="reg-role"
+                class="form-control"
+                [(ngModel)]="role"
+                name="role"
+                aria-describedby="reg-role-hint"
+              >
+                <option value="CLIENT">{{ i18n.t('auth.roleClient') }}</option>
+                <option value="BUSINESS_ADMIN">{{ i18n.t('auth.roleBusiness') }}</option>
+              </select>
+            </div>
+          </div>
+          <p id="reg-role-hint" class="form-hint role-hint">{{ i18n.t('auth.roleHint') }}</p>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-email">
+              <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+              {{ i18n.t('auth.email') }} *
+            </label>
+            <input
+              id="reg-email"
+              type="email"
+              inputmode="email"
+              class="form-control"
+              [(ngModel)]="email"
+              name="email"
+              #emailCtl="ngModel"
+              required
+              email
+              autocomplete="email"
+              autocapitalize="none"
+              spellcheck="false"
+              placeholder="correo@ejemplo.com"
+              [attr.aria-invalid]="emailCtl.invalid && (emailCtl.touched || submitted())"
+              [attr.aria-describedby]="emailCtl.invalid && (emailCtl.touched || submitted()) ? 'reg-email-error' : null"
+            />
+            @if (emailCtl.invalid && (emailCtl.touched || submitted())) {
+              <p id="reg-email-error" class="form-error" role="alert">
+                {{ emailCtl.errors?.['required'] ? i18n.t('auth.errEmailRequired') : i18n.t('auth.errEmailInvalid') }}
+              </p>
+            }
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-password">
+              <i class="fa-solid fa-lock" aria-hidden="true"></i>
+              {{ i18n.t('auth.password') }} *
+            </label>
+            <div class="password-field">
+              <input
+                id="reg-password"
+                [type]="showPassword() ? 'text' : 'password'"
+                class="form-control"
+                [(ngModel)]="password"
+                name="password"
+                #passwordCtl="ngModel"
+                required
+                minlength="6"
+                autocomplete="new-password"
+                [placeholder]="i18n.t('auth.passwordMinPlaceholder')"
+                [attr.aria-invalid]="passwordCtl.invalid && (passwordCtl.touched || submitted())"
+                [attr.aria-describedby]="'reg-password-hint' + (passwordCtl.invalid && (passwordCtl.touched || submitted()) ? ' reg-password-error' : '')"
+              />
+              <button
+                type="button"
+                class="password-toggle"
+                (click)="togglePassword()"
+                [attr.aria-label]="showPassword() ? i18n.t('auth.hidePassword') : i18n.t('auth.showPassword')"
+                [attr.aria-pressed]="showPassword()"
+              >
+                <i class="fa-solid" [class.fa-eye-slash]="showPassword()" [class.fa-eye]="!showPassword()" aria-hidden="true"></i>
+              </button>
+            </div>
+
+            <div id="reg-password-hint" class="strength" aria-live="polite">
+              <div class="strength-bars" aria-hidden="true">
+                @for (i of [1, 2, 3, 4]; track i) {
+                  <span class="strength-seg" [class.on]="passwordScore() >= i" [attr.data-level]="passwordScore()"></span>
+                }
+              </div>
+              @if (password) {
+                <span class="strength-text">{{ i18n.t('auth.strengthLabel') }} <strong>{{ strengthLabel() }}</strong></span>
+              }
+            </div>
+
+            @if (passwordCtl.invalid && (passwordCtl.touched || submitted())) {
+              <p id="reg-password-error" class="form-error" role="alert">
+                {{ passwordCtl.errors?.['required'] ? i18n.t('auth.errPasswordRequired') : i18n.t('auth.errPasswordMin') }}
+              </p>
+            }
+          </div>
+
+          <button type="submit" class="btn-knect btn-knect-accent btn-lg btn-full submit-btn" [attr.aria-busy]="isLoading()">
+            <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+            <span>{{ i18n.t('nav.register') }}</span>
+          </button>
+          @if (isLoading()) {
+            <span class="sr-only" role="status">{{ i18n.t('auth.creating') }}</span>
+          }
+        </form>
+
+        <p class="auth-footer-text">
+          {{ i18n.t('auth.haveAccount') }}
+          <a routerLink="/auth/login">{{ i18n.t('nav.login') }}</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

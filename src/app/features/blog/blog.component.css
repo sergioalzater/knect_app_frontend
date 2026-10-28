@@ -1,0 +1,132 @@
+.news-hero {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(0, 163, 255, 0.08) 0%, transparent 60%),
+    linear-gradient(180deg, var(--knect-bg-card) 0%, var(--knect-bg-main) 100%);
+  color: var(--knect-primary);
+  padding: 3.5rem 0 2.5rem;
+  border-bottom: 1px solid var(--knect-border);
+}
+
+.news-hero h1 {
+  font-size: clamp(2rem, 3.8vw, 2.75rem);
+  color: var(--knect-primary);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  margin: 0.9rem 0 0.4rem;
+}
+
+.news-hero p {
+  color: var(--knect-text-muted);
+  max-width: 660px;
+  font-size: 1.02rem;
+}
+
+.news-body-section {
+  padding: 3rem 0 4.5rem;
+}
+
+.notes-section-intro {
+  margin-bottom: 2rem;
+}
+
+.notes-heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: clamp(1.45rem, 2.6vw, 1.95rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--knect-primary);
+}
+
+.notes-heading i {
+  color: var(--knect-accent);
+}
+
+.articles-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.75rem;
+}
+
+@media (min-width: 768px) {
+  .articles-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1080px) {
+  .articles-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.article-detail {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2rem;
+  border-radius: 24px;
+}
+
+@media (min-width: 768px) {
+  .article-detail {
+    padding: 3.25rem;
+  }
+}
+
+.article-top-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--knect-border);
+}
+
+.article-meta {
+  font-size: 0.85rem;
+  color: var(--knect-text-muted);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.article-meta i {
+  color: var(--knect-accent);
+}
+
+.article-title {
+  font-size: clamp(1.65rem, 3.2vw, 2.35rem);
+  color: var(--knect-primary);
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  margin-bottom: 1.15rem;
+}
+
+.article-lead {
+  font-size: 1.08rem;
+  color: var(--knect-text-muted);
+  font-weight: 500;
+  line-height: 1.65;
+  margin-bottom: 1.75rem;
+}
+
+.article-hero-image {
+  width: 100%;
+  max-height: 440px;
+  object-fit: cover;
+  border-radius: 18px;
+  margin-bottom: 2rem;
+}
+
+.article-paragraphs {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  font-size: 1.02rem;
+  line-height: 1.8;
+  color: var(--knect-text-main);
+}

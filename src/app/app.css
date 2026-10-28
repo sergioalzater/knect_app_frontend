@@ -1,0 +1,9 @@
+.app-content {
+  min-height: calc(100vh - 140px);
+  background-color: var(--knect-bg-main);
+}
+
+/* El <main> recibe foco programático (skip link); no mostrar anillo en el contenedor */
+.app-content:focus {
+  outline: none;
+}

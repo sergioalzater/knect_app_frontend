@@ -1,0 +1,1102 @@
+<!-- Layout BackOffice Knect (Estructura limpia con paleta #1A365D / #00A3FF y Font Awesome) -->
+<div class="bo-layout">
+  <!-- Barra Lateral Izquierda (BackOffice Sidebar) -->
+  <aside class="bo-sidebar" aria-label="Menú BackOffice SuperAdmin">
+    <div class="bo-sidebar-brand">
+      <div class="bo-brand-row">
+        <img src="/logo-knect.svg" alt="Knect" class="bo-brand-logo" width="42" height="42" />
+        <div>
+          <span class="bo-brand-title">BackOffice</span>
+          <span class="bo-brand-sub">Super Administrador</span>
+        </div>
+      </div>
+    </div>
+
+    <nav class="bo-menu">
+      <button
+        type="button"
+        class="bo-menu-item"
+        [class.active]="activeTab() === 'ANALYTICS'"
+        (click)="activeTab.set('ANALYTICS')"
+      >
+        <i class="fa-solid fa-chart-pie" aria-hidden="true"></i>
+        <span>Dashboard Web y Locales</span>
+      </button>
+
+      <button
+        type="button"
+        class="bo-menu-item"
+        [class.active]="activeTab() === 'DIRECTORY'"
+        (click)="activeTab.set('DIRECTORY')"
+      >
+        <i class="fa-solid fa-store" aria-hidden="true"></i>
+        <span>Restaurantes y Locales</span>
+      </button>
+
+      <button
+        type="button"
+        class="bo-menu-item"
+        [class.active]="activeTab() === 'CMS_NEWS'"
+        (click)="activeTab.set('CMS_NEWS')"
+      >
+        <i class="fa-solid fa-newspaper" aria-hidden="true"></i>
+        <span>Notas de Interés / Noticias</span>
+      </button>
+
+      <button
+        type="button"
+        class="bo-menu-item"
+        [class.active]="activeTab() === 'CMS_HOME'"
+        (click)="activeTab.set('CMS_HOME')"
+      >
+        <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+        <span>Página de Inicio (CMS)</span>
+      </button>
+    </nav>
+
+    <div class="bo-sidebar-footer">
+      <div class="bo-user-box">
+        <div class="bo-user-avatar">SA</div>
+        <div class="bo-user-meta">
+          <strong>{{ authService.user()?.name || 'Super Admin' }}</strong>
+          <small>{{ authService.user()?.email || 'admin@knect.com' }}</small>
+        </div>
+      </div>
+      <div class="bo-footer-actions">
+        <a routerLink="/" class="bo-footer-link">
+          <i class="fa-solid fa-globe" aria-hidden="true"></i> Ir al Portal Web
+        </a>
+        <button type="button" class="bo-logout-btn" (click)="logout()">
+          <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Cerrar sesión
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Área Principal del BackOffice -->
+  <div class="bo-main">
+    <header class="bo-header-container">
+      <div class="bo-header-top">
+        <h1 class="bo-title">
+          @switch (activeTab()) {
+            @case ('ANALYTICS') {
+              <i class="fa-solid fa-chart-pie" aria-hidden="true"></i>
+            }
+            @case ('DIRECTORY') {
+              <i class="fa-solid fa-store" aria-hidden="true"></i>
+            }
+            @case ('CMS_NEWS') {
+              <i class="fa-solid fa-newspaper" aria-hidden="true"></i>
+            }
+            @case ('CMS_HOME') {
+              <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+            }
+          }
+          {{ pageTitle }}
+        </h1>
+        <div class="bo-header-quick-actions">
+          @if (activeTab() === 'DIRECTORY') {
+            <button type="button" class="bo-btn-new" (click)="startNewBusiness()">
+              <i class="fa-solid fa-plus" aria-hidden="true"></i> Nuevo Restaurante / Local
+            </button>
+          }
+          @if (activeTab() === 'CMS_NEWS') {
+            <button type="button" class="bo-btn-new" (click)="startNewPost()">
+              <i class="fa-solid fa-plus" aria-hidden="true"></i> Nueva Nota de Interés
+            </button>
+          }
+        </div>
+      </div>
+      <div class="bo-breadcrumb">
+        <span><i class="fa-solid fa-house" aria-hidden="true"></i> INICIO</span>
+        <span class="bo-crumb-sep"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></span>
+        <span class="bo-crumb-current">{{ breadcrumbLabel }}</span>
+      </div>
+    </header>
+
+    @if (feedbackMsg()) {
+      <div class="alert-banner alert-success" style="margin-bottom: 1.5rem" role="status" aria-live="polite">
+        <i class="fa-solid fa-circle-check" aria-hidden="true"></i> {{ feedbackMsg() }}
+      </div>
+    }
+
+    <!-- ===================================================================== -->
+    <!-- SECCIÓN 1: DASHBOARD DE LA WEB Y DASHBOARD DE CADA LOCAL SELECCIONADO -->
+    <!-- ===================================================================== -->
+    @if (activeTab() === 'ANALYTICS' && analytics(); as g) {
+      <!-- Bloque A: Comportamiento Global de la Plataforma Web -->
+      <section class="bo-section-card">
+        <div class="bo-card-head-flex">
+          <div>
+            <h2 class="bo-section-title">
+              <span><i class="fa-solid fa-globe" aria-hidden="true"></i> 1. COMPORTAMIENTO GLOBAL DE LA PLATAFORMA WEB</span>
+            </h2>
+            <p class="bo-section-desc">
+              Métricas consolidadas de tráfico, búsquedas, clics a WhatsApp y participación de todos los restaurantes y comercios activos.
+            </p>
+          </div>
+          <span class="bo-status-pill">
+            <i class="fa-solid fa-circle-check" aria-hidden="true"></i> Plataforma en Línea &bull; {{ g.totalActiveBusinesses }} Locales Activos
+          </span>
+        </div>
+
+        <div class="kpi-grid">
+          <app-kpi-stat-card
+            label="Visitas Totales a la Web"
+            [value]="g.totalVisits"
+            subtitle="Tráfico acumulado en el portal"
+            icon="fa-solid fa-eye"
+            delta="+18.4%"
+            deltaType="up"
+            sparklinePoints="0,24 14,20 28,22 42,14 56,11 72,3"
+          />
+          <app-kpi-stat-card
+            label="Restaurantes y Locales"
+            [value]="g.totalActiveBusinesses + ' / ' + g.totalBusinesses"
+            [subtitle]="g.totalBranches + ' sedes georreferenciadas'"
+            icon="fa-solid fa-store"
+            valueColor="var(--knect-primary)"
+            delta="Operativos"
+            deltaType="neutral"
+          />
+          <app-kpi-stat-card
+            label="Conversiones WhatsApp"
+            [value]="g.totalWhatsappClicks"
+            subtitle="Clics directos a wa.me"
+            icon="fa-brands fa-whatsapp"
+            valueColor="var(--knect-success)"
+            delta="+24.1%"
+            deltaType="up"
+            sparklinePoints="0,25 14,21 28,18 42,15 56,8 72,2"
+          />
+          <app-kpi-stat-card
+            label="Búsquedas y Calificaciones"
+            [value]="g.totalSearchQueries"
+            [subtitle]="g.totalReviews + ' reseñas de clientes'"
+            icon="fa-solid fa-magnifying-glass"
+            valueColor="var(--knect-accent)"
+            delta="+9.2%"
+            deltaType="up"
+            sparklinePoints="0,22 14,19 28,17 42,16 56,10 72,6"
+          />
+        </div>
+
+        <div class="analytics-two-col">
+          <div class="bo-inner-panel">
+            <h3 class="bo-sub-heading">
+              <i class="fa-solid fa-layer-group" aria-hidden="true"></i> Distribución por Categoría Gastronómica / Comercial
+            </h3>
+            <div class="cat-bars">
+              @for (entry of g.businessesByCategory | keyvalue; track entry.key) {
+                <div class="cat-bar-item">
+                  <div class="cat-bar-top">
+                    <strong>{{ entry.key }}</strong>
+                    <span class="tabular-nums">
+                      {{ entry.value }} locales ({{ ((entry.value / (g.totalBusinesses || 1)) * 100).toFixed(0) }}%)
+                    </span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill" [style.width.%]="(entry.value / (g.totalBusinesses || 1)) * 100"></div>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <h4 class="bo-sub-heading" style="margin-top: 1.5rem">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Términos más buscados en el portal
+            </h4>
+            <div class="search-tags">
+              @for (q of g.recentSearches; track q) {
+                <span class="bo-search-tag"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> {{ q }}</span>
+              }
+            </div>
+          </div>
+
+          <div class="bo-inner-panel">
+            <h3 class="bo-sub-heading">
+              <i class="fa-solid fa-ranking-star" aria-hidden="true"></i> Top Restaurantes por Interacción (Haz clic para ver su Dashboard)
+            </h3>
+            <div class="bo-table-wrap">
+              <table class="bo-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Restaurante / Local</th>
+                    <th scope="col">Zona</th>
+                    <th scope="col">Visitas</th>
+                    <th scope="col">WhatsApp</th>
+                    <th scope="col">Dashboard</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (b of g.topBusinessesByWhatsapp; track b.id) {
+                    <tr [class.bo-row-selected]="selectedDashboardBizId() === b.id">
+                      <td><strong>{{ b.name }}</strong></td>
+                      <td>{{ b.neighborhood }}</td>
+                      <td class="tabular-nums">{{ b.viewCount }}</td>
+                      <td class="tabular-nums"><strong>{{ b.whatsappClickCount }}</strong></td>
+                      <td>
+                        <button
+                          type="button"
+                          class="bo-action-chip"
+                          (click)="selectDashboardBusiness(b.id)"
+                        >
+                          <i class="fa-solid fa-chart-pie" aria-hidden="true"></i> Ver Local
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bloque B: Dashboard Individual de cada Restaurante / Local Seleccionado -->
+      <section class="bo-section-card bo-highlight-local-dashboard">
+        <div class="bo-local-selector-bar">
+          <div>
+            <h2 class="bo-section-title">
+              <span><i class="fa-solid fa-store" aria-hidden="true"></i> 2. DASHBOARD INDIVIDUAL POR RESTAURANTE / LOCAL</span>
+            </h2>
+            <p class="bo-section-desc">
+              Selecciona cualquier restaurante del directorio para auditar su rendimiento individual, embudo de conversión, sedes y reseñas.
+            </p>
+          </div>
+
+          <div class="bo-selector-controls">
+            <label for="sa-select-local-dashboard" class="bo-field-label" style="margin: 0">
+              <i class="fa-solid fa-building-user" aria-hidden="true"></i> Restaurante Seleccionado:
+            </label>
+            <select
+              id="sa-select-local-dashboard"
+              class="bo-input bo-select-local"
+              [ngModel]="selectedDashboardBizId()"
+              (ngModelChange)="selectDashboardBusiness($event)"
+            >
+              @for (biz of allBusinessesList(); track biz.id) {
+                <option [ngValue]="biz.id">
+                  {{ biz.name }} — {{ biz.neighborhood }} ({{ biz.category }})
+                </option>
+              }
+            </select>
+          </div>
+        </div>
+
+        @if (selectedBizAnalytics(); as localAn) {
+          @if (selectedBizDetail(); as localBiz) {
+            <div class="bo-local-summary-banner">
+              <div class="bo-local-id">
+                <img
+                  [src]="localBiz.logoUrl || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=150&q=80'"
+                  alt=""
+                  class="bo-local-avatar"
+                />
+                <div>
+                  <h3>{{ localBiz.name }}</h3>
+                  <p>
+                    <i class="fa-solid fa-location-dot" aria-hidden="true"></i> {{ localBiz.neighborhood }} &bull; {{ localBiz.category }} &bull;
+                    Titular: <strong>{{ localBiz.ownerName || 'Asignado' }}</strong>
+                  </p>
+                </div>
+              </div>
+              <div class="bo-local-banner-btns">
+                <button type="button" class="bo-btn-save" (click)="editSelectedDashboardBusiness()">
+                  <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Editar este Restaurante
+                </button>
+                <a
+                  [routerLink]="['/brand-admin']"
+                  [queryParams]="{ businessId: localBiz.id }"
+                  class="bo-btn-secondary"
+                >
+                  <i class="fa-solid fa-building-user" aria-hidden="true"></i> Gestionar Sedes y Reseñas
+                </a>
+                <a [routerLink]="['/businesses', localBiz.id]" class="bo-btn-secondary">
+                  <i class="fa-solid fa-eye" aria-hidden="true"></i> Ver Ficha Pública
+                </a>
+              </div>
+            </div>
+          }
+
+          <div class="kpi-grid">
+            <app-kpi-stat-card
+              label="Calificación del Restaurante"
+              [value]="localAn.ratingAvg + ' / 5.0'"
+              [subtitle]="localAn.reviewCount + ' calificaciones de clientes'"
+              icon="fa-solid fa-star"
+              valueColor="var(--knect-warning)"
+              delta="Verificado"
+              deltaType="up"
+            />
+            <app-kpi-stat-card
+              label="Apariciones en Búsqueda"
+              [value]="localAn.searchAppearanceCount"
+              subtitle="Impresiones en el directorio"
+              icon="fa-solid fa-magnifying-glass"
+              valueColor="var(--knect-accent)"
+              delta="+14%"
+              deltaType="up"
+            />
+            <app-kpi-stat-card
+              label="Visitas a la Ficha del Local"
+              [value]="localAn.viewCount"
+              subtitle="Usuarios que abrieron el perfil"
+              icon="fa-solid fa-eye"
+              valueColor="var(--knect-primary)"
+              delta="+9%"
+              deltaType="up"
+            />
+            <app-kpi-stat-card
+              label="Clics a WhatsApp del Local"
+              [value]="localAn.whatsappClickCount"
+              [subtitle]="selectedBizConversionRate() + '% tasa de conversión'"
+              icon="fa-brands fa-whatsapp"
+              valueColor="var(--knect-success)"
+              [delta]="selectedBizConversionRate() + '% conv.'"
+              deltaType="up"
+            />
+          </div>
+
+          <div class="analytics-two-col">
+            <div class="bo-inner-panel">
+              <h3 class="bo-sub-heading">
+                <i class="fa-solid fa-filter-circle-dollar" aria-hidden="true"></i> Embudo de Conversión de {{ localAn.businessName }}
+              </h3>
+              <div class="cat-bars">
+                <div class="cat-bar-item">
+                  <div class="cat-bar-top">
+                    <strong>1. Apariciones en búsquedas</strong>
+                    <span class="tabular-nums">{{ localAn.searchAppearanceCount }}</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill" style="width: 100%"></div>
+                  </div>
+                </div>
+                <div class="cat-bar-item">
+                  <div class="cat-bar-top">
+                    <strong>2. Visitas a la ficha del restaurante</strong>
+                    <span class="tabular-nums">{{ localAn.viewCount }}</span>
+                  </div>
+                  <div class="progress-track">
+                    <div
+                      class="progress-fill"
+                      [style.width.%]="localAn.searchAppearanceCount ? (localAn.viewCount / localAn.searchAppearanceCount) * 100 : 70"
+                    ></div>
+                  </div>
+                </div>
+                <div class="cat-bar-item">
+                  <div class="cat-bar-top">
+                    <strong>3. Contactos directos por WhatsApp ({{ selectedBizConversionRate() }}%)</strong>
+                    <span class="tabular-nums">{{ localAn.whatsappClickCount }}</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill" [style.width.%]="selectedBizConversionRate()"></div>
+                  </div>
+                </div>
+                <div class="cat-bar-item">
+                  <div class="cat-bar-top">
+                    <strong>4. Atención a Reseñas ({{ selectedBizReplyRate() }}% respondidas)</strong>
+                    <span class="tabular-nums">
+                      {{ localAn.repliedReviewsCount || 0 }} respondidas / {{ localAn.pendingReviewsCount || 0 }} pendientes
+                    </span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill" [style.width.%]="selectedBizReplyRate()"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bo-inner-panel">
+              <h3 class="bo-sub-heading">
+                <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i> Desempeño por Sede de {{ localAn.businessName }}
+              </h3>
+              <div class="bo-table-wrap">
+                <table class="bo-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Sede</th>
+                      <th scope="col">Barrio</th>
+                      <th scope="col">WhatsApp</th>
+                      <th scope="col">Clics WA</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (br of localAn.branchesPerformance; track br.establishmentId || br.id) {
+                      <tr>
+                        <td><strong>{{ br.name }}</strong></td>
+                        <td>{{ br.neighborhood }}</td>
+                        <td><code>{{ br.whatsapp || br.phone }}</code></td>
+                        <td class="tabular-nums"><strong>{{ br.whatsappClicks || 0 }} clics</strong></td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        }
+      </section>
+    }
+
+    <!-- ===================================================================== -->
+    <!-- SECCIÓN 2: EDITOR DE RESTAURANTES Y LOCALES (TABLA + FORMULARIO)      -->
+    <!-- ===================================================================== -->
+    @if (activeTab() === 'DIRECTORY') {
+      @if (showBusinessEditor()) {
+        <section class="bo-section-card">
+          <div class="bo-card-head-flex">
+            <h2 class="bo-section-title">
+              <span>
+                <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                {{ editingBusinessId ? 'EDITANDO RESTAURANTE SELECCIONADO (ID #' + editingBusinessId + ')' : 'REGISTRAR NUEVO RESTAURANTE / LOCAL' }}
+              </span>
+            </h2>
+            <button type="button" class="bo-btn-secondary" (click)="resetBusinessForm()">
+              <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Volver al Listado
+            </button>
+          </div>
+
+          <form (ngSubmit)="saveBusiness()">
+            <div class="bo-form-grid-3">
+              <div>
+                <label class="bo-field-label" for="sa-biz-name">
+                  <i class="fa-solid fa-store" aria-hidden="true"></i> Nombre del Restaurante / Local *
+                </label>
+                <input id="sa-biz-name" type="text" class="bo-input" [(ngModel)]="businessForm.name" name="name" required />
+              </div>
+              <div>
+                <label class="bo-field-label" for="sa-biz-cat">
+                  <i class="fa-solid fa-utensils" aria-hidden="true"></i> Categoría
+                </label>
+                <select id="sa-biz-cat" class="bo-input" [(ngModel)]="businessForm.establishmentTypeId" name="catId">
+                  @for (cat of categories(); track cat.establishmentTypeId) {
+                    <option [ngValue]="cat.establishmentTypeId">{{ cat.name }}</option>
+                  }
+                </select>
+              </div>
+              <div>
+                <label class="bo-field-label" for="sa-biz-zone">
+                  <i class="fa-solid fa-location-dot" aria-hidden="true"></i> Barrio / Sector Principal
+                </label>
+                <input id="sa-biz-zone" type="text" class="bo-input" [(ngModel)]="businessForm.neighborhood" name="neighborhood" />
+              </div>
+            </div>
+
+            <div class="bo-form-grid-3">
+              <div>
+                <label class="bo-field-label" for="sa-biz-address">
+                  <i class="fa-solid fa-map-pin" aria-hidden="true"></i> Dirección Principal
+                </label>
+                <input id="sa-biz-address" type="text" class="bo-input" [(ngModel)]="businessForm.address" name="address" />
+              </div>
+              <div>
+                <label class="bo-field-label" for="sa-biz-wa">
+                  <i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp Directo (ej. 57300...)
+                </label>
+                <input id="sa-biz-wa" type="text" class="bo-input" [(ngModel)]="businessForm.whatsapp" name="whatsapp" />
+              </div>
+              <div>
+                <label class="bo-field-label" for="sa-biz-phone">
+                  <i class="fa-solid fa-phone" aria-hidden="true"></i> Teléfono Fijo / Celular
+                </label>
+                <input id="sa-biz-phone" type="text" class="bo-input" [(ngModel)]="businessForm.phone" name="phone" />
+              </div>
+            </div>
+
+            <div class="bo-form-grid-3">
+              <div>
+                <label class="bo-field-label" for="sa-biz-email">
+                  <i class="fa-solid fa-envelope" aria-hidden="true"></i> Correo Electrónico del Local
+                </label>
+                <input id="sa-biz-email" type="email" class="bo-input" [(ngModel)]="businessForm.email" name="email" />
+              </div>
+              <div>
+                <label class="bo-field-label" for="sa-biz-web">
+                  <i class="fa-solid fa-globe" aria-hidden="true"></i> Sitio Web / Menú Digital
+                </label>
+                <input id="sa-biz-web" type="url" class="bo-input" [(ngModel)]="businessForm.website" name="website" />
+              </div>
+              <div>
+                <label class="bo-field-label" for="sa-biz-color">
+                  <i class="fa-solid fa-palette" aria-hidden="true"></i> Color Corporativo (HEX)
+                </label>
+                <input id="sa-biz-color" type="text" class="bo-input" [(ngModel)]="businessForm.primaryColor" name="primaryColor" />
+              </div>
+            </div>
+
+            <div class="bo-form-grid-2">
+              <div>
+                <label class="bo-field-label" for="sa-biz-desc-es">
+                  <i class="fa-solid fa-align-left" aria-hidden="true"></i> Descripción Comercial (Español)
+                </label>
+                <textarea id="sa-biz-desc-es" rows="3" class="bo-input" [(ngModel)]="businessForm.description" name="descEs"></textarea>
+              </div>
+              <div>
+                <label class="bo-field-label" for="sa-biz-desc-en">
+                  <i class="fa-solid fa-language" aria-hidden="true"></i> Descripción Comercial (Inglés)
+                </label>
+                <textarea id="sa-biz-desc-en" rows="3" class="bo-input" [(ngModel)]="businessForm.descriptionEn" name="descEn"></textarea>
+              </div>
+            </div>
+
+            <!-- Cajas Multimedia -->
+            <div class="bo-form-grid-2" style="margin-top: 1rem">
+              <div class="bo-media-box">
+                <span class="bo-field-label">
+                  <i class="fa-solid fa-image" aria-hidden="true"></i> LOGOTIPO DEL RESTAURANTE
+                </span>
+                @if (businessForm.logoUrl) {
+                  <img [src]="businessForm.logoUrl" alt="Logo preview" class="bo-media-preview-sm" />
+                }
+                <input
+                  type="url"
+                  class="bo-input"
+                  [(ngModel)]="businessForm.logoUrl"
+                  name="logoUrl"
+                  placeholder="URL del logo (https://...)"
+                />
+                <input type="file" accept="image/*" (change)="onBusinessImageChange($event, 'logoUrl')" />
+              </div>
+
+              <div class="bo-media-box">
+                <span class="bo-field-label">
+                  <i class="fa-solid fa-panorama" aria-hidden="true"></i> BANNER DE PORTADA DEL RESTAURANTE
+                </span>
+                @if (businessForm.bannerUrl) {
+                  <img [src]="businessForm.bannerUrl" alt="Banner preview" class="bo-media-preview-lg" />
+                }
+                <input
+                  type="url"
+                  class="bo-input"
+                  [(ngModel)]="businessForm.bannerUrl"
+                  name="bannerUrl"
+                  placeholder="URL del banner (https://...)"
+                />
+                <input type="file" accept="image/*" (change)="onBusinessImageChange($event, 'bannerUrl')" />
+              </div>
+            </div>
+
+            <div class="checkbox-row">
+              <label>
+                <input type="checkbox" [(ngModel)]="businessForm.isFeatured" name="isFeatured" />
+                Destacar este Restaurante en la Página de Inicio
+              </label>
+              <label>
+                <input type="checkbox" [(ngModel)]="businessForm.isGhostKitchen" name="isGhostKitchen" />
+                Opera como Cocina Oculta (Dark Kitchen)
+              </label>
+              <label>
+                <input type="checkbox" [(ngModel)]="businessForm.isActive" name="isActive" />
+                Restaurante Activo y Visible al Público
+              </label>
+            </div>
+
+            <div class="bo-form-footer">
+              <button type="button" class="bo-btn-secondary" (click)="resetBusinessForm()">Cancelar</button>
+              <button type="submit" class="bo-btn-save">
+                <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>
+                {{ editingBusinessId ? 'Guardar Cambios del Restaurante' : 'Crear Restaurante' }}
+              </button>
+            </div>
+          </form>
+        </section>
+      }
+
+      <!-- Tabla Maestra de Restaurantes -->
+      <section class="bo-section-card">
+        <div class="bo-table-toolbar">
+          <div>
+            <h2 class="bo-section-title" style="margin-bottom: 0.2rem">
+              <span><i class="fa-solid fa-table-list" aria-hidden="true"></i> CATÁLOGO MAESTRO DE RESTAURANTES Y LOCALES</span>
+            </h2>
+            <p class="bo-section-desc" style="margin: 0">
+              Selecciona cualquier restaurante para editar su información, asignar su administrador o inspeccionar su Dashboard.
+            </p>
+          </div>
+          <div class="bo-search-box">
+            <input
+              type="search"
+              class="bo-input"
+              [(ngModel)]="adminSearch"
+              (ngModelChange)="onSearchAdminDirectory()"
+              (keyup.enter)="onSearchAdminDirectory()"
+              placeholder="Buscar restaurante, zona o titular..."
+            />
+            <button type="button" class="bo-btn-save" (click)="onSearchAdminDirectory()">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Buscar
+            </button>
+          </div>
+        </div>
+
+        <div class="bo-table-wrap">
+          <table class="bo-table">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Restaurante / Local</th>
+                <th scope="col">Categoría y Barrio</th>
+                <th scope="col">Admin del Local Asignado</th>
+                <th scope="col">Destacado</th>
+                <th scope="col">Activo</th>
+                <th scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (biz of businesses(); track biz.id) {
+                <tr>
+                  <td class="tabular-nums"><strong>#{{ biz.id }}</strong></td>
+                  <td>
+                    <strong>{{ biz.name }}</strong>
+                    <br />
+                    <small>
+                      <i class="fa-solid fa-store" aria-hidden="true"></i> {{ biz.establishments?.length || 1 }} sedes &bull;
+                      <i class="fa-solid fa-star" style="color: var(--knect-warning)" aria-hidden="true"></i> {{ biz.ratingAvg || '5.0' }}
+                    </small>
+                  </td>
+                  <td>
+                    {{ biz.category }}<br />
+                    <small><i class="fa-solid fa-location-dot" aria-hidden="true"></i> {{ biz.neighborhood }}</small>
+                  </td>
+                  <td>
+                    <select
+                      class="bo-input bo-select-compact"
+                      [ngModel]="biz.ownerUserId"
+                      (ngModelChange)="onChangeOwnerById(biz, $event)"
+                      [attr.aria-label]="'Titular de ' + biz.name"
+                    >
+                      @for (u of users(); track u.id) {
+                        <option [ngValue]="u.id">
+                          {{ u.name }} {{ u.lastName }} ({{ u.email }})
+                        </option>
+                      }
+                    </select>
+                  </td>
+                  <td>
+                    <label class="bo-switch" [title]="biz.isFeatured ? 'Destacado en Home' : 'No destacado'">
+                      <input
+                        type="checkbox"
+                        [checked]="biz.isFeatured"
+                        (change)="toggleFeatured(biz)"
+                      />
+                      <span class="bo-slider"></span>
+                    </label>
+                  </td>
+                  <td>
+                    <label class="bo-switch" [title]="biz.isActive !== false ? 'Activo' : 'Inactivo'">
+                      <input
+                        type="checkbox"
+                        [checked]="biz.isActive !== false"
+                        (change)="toggleActive(biz)"
+                      />
+                      <span class="bo-slider"></span>
+                    </label>
+                  </td>
+                  <td>
+                    <div class="bo-actions">
+                      <button
+                        type="button"
+                        class="bo-action-btn"
+                        title="Ver Dashboard de este Restaurante"
+                        (click)="inspectBusinessDashboard(biz.id)"
+                      >
+                        <i class="fa-solid fa-chart-pie" aria-hidden="true"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="bo-action-btn"
+                        title="Editar información de este Restaurante"
+                        (click)="startEditBusiness(biz)"
+                      >
+                        <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                      </button>
+                      <a
+                        [routerLink]="['/brand-admin']"
+                        [queryParams]="{ businessId: biz.id }"
+                        class="bo-action-btn"
+                        title="Gestionar Sedes, Horarios y Reseñas del Local"
+                      >
+                        <i class="fa-solid fa-building-user" aria-hidden="true"></i>
+                      </a>
+                      <button
+                        type="button"
+                        class="bo-action-btn delete"
+                        title="Eliminar Restaurante"
+                        (click)="confirmDeleteBusiness.set(biz)"
+                      >
+                        <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginador inferior derecho -->
+        <div class="bo-pagination-footer">
+          <span>Filas por página: <strong>{{ adminPageSize }}</strong></span>
+          <span>
+            Página <strong>{{ adminPage() + 1 }}</strong> de <strong>{{ adminTotalPages() }}</strong>
+            ({{ adminTotalElements() }} restaurantes)
+          </span>
+          <div class="bo-page-btns">
+            <button type="button" (click)="changeAdminPage(0)" [disabled]="adminPage() === 0" aria-label="Primera página">
+              <i class="fa-solid fa-angles-left" aria-hidden="true"></i>
+            </button>
+            <button type="button" (click)="changeAdminPage(adminPage() - 1)" [disabled]="adminPage() === 0" aria-label="Página anterior">
+              <i class="fa-solid fa-angle-left" aria-hidden="true"></i>
+            </button>
+            <button
+              type="button"
+              (click)="changeAdminPage(adminPage() + 1)"
+              [disabled]="adminPage() + 1 >= adminTotalPages()"
+              aria-label="Página siguiente"
+            >
+              <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+            </button>
+            <button
+              type="button"
+              (click)="changeAdminPage(adminTotalPages() - 1)"
+              [disabled]="adminPage() + 1 >= adminTotalPages()"
+              aria-label="Última página"
+            >
+              <i class="fa-solid fa-angles-right" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- ===================================================================== -->
+    <!-- SECCIÓN 3: EDITOR DE NOTAS DE INTERÉS / NOTICIAS                      -->
+    <!-- ===================================================================== -->
+    @if (activeTab() === 'CMS_NEWS') {
+      @if (showPostEditor()) {
+        <section class="bo-section-card">
+          <div class="bo-card-head-flex">
+            <h2 class="bo-section-title">
+              <span>
+                <i class="fa-solid fa-pen-nib" aria-hidden="true"></i>
+                {{ editingPostId ? 'EDITAR NOTA DE INTERÉS / NOTICIA #' + editingPostId : 'PUBLICAR NUEVA NOTA DE INTERÉS' }}
+              </span>
+            </h2>
+            <button type="button" class="bo-btn-secondary" (click)="resetPostForm()">
+              <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Volver a Notas de Interés
+            </button>
+          </div>
+
+          <form (ngSubmit)="savePost()">
+            <div class="bo-form-grid-2">
+              <div>
+                <label class="bo-field-label" for="news-title-es">
+                  <i class="fa-solid fa-heading" aria-hidden="true"></i> Título de la Nota (Español) *
+                </label>
+                <input id="news-title-es" type="text" class="bo-input" [(ngModel)]="postForm.title" name="pTitle" required />
+              </div>
+              <div>
+                <label class="bo-field-label" for="news-title-en">
+                  <i class="fa-solid fa-language" aria-hidden="true"></i> Título de la Nota (Inglés)
+                </label>
+                <input id="news-title-en" type="text" class="bo-input" [(ngModel)]="postForm.titleEn" name="pTitleEn" />
+              </div>
+            </div>
+
+            <div class="bo-form-grid-2">
+              <div>
+                <label class="bo-field-label" for="news-author">
+                  <i class="fa-solid fa-user-pen" aria-hidden="true"></i> Autor / Categoría Editorial
+                </label>
+                <input id="news-author" type="text" class="bo-input" [(ngModel)]="postForm.authorName" name="pAuthor" />
+              </div>
+              <div class="bo-switch-inline-box">
+                <span class="bo-field-label" style="margin: 0">Estado de Publicación</span>
+                <label class="bo-switch">
+                  <input type="checkbox" [(ngModel)]="postForm.isActive" name="pActive" />
+                  <span class="bo-slider"></span>
+                </label>
+                <span>{{ postForm.isActive !== false ? 'Publicada' : 'Borrador' }}</span>
+              </div>
+            </div>
+
+            <div class="bo-form-grid-2">
+              <div>
+                <label class="bo-field-label" for="news-sum-es">
+                  <i class="fa-solid fa-align-left" aria-hidden="true"></i> Resumen Corto (Español)
+                </label>
+                <textarea id="news-sum-es" rows="2" class="bo-input" [(ngModel)]="postForm.summary" name="pSumEs"></textarea>
+              </div>
+              <div>
+                <label class="bo-field-label" for="news-sum-en">
+                  <i class="fa-solid fa-language" aria-hidden="true"></i> Resumen Corto (Inglés)
+                </label>
+                <textarea id="news-sum-en" rows="2" class="bo-input" [(ngModel)]="postForm.summaryEn" name="pSumEn"></textarea>
+              </div>
+            </div>
+
+            <!-- Barra de herramientas de formato -->
+            <div class="bo-rich-editor-wrap">
+              <div class="bo-rich-toolbar">
+                <button type="button" (click)="insertPostFormat('h2')" title="Insertar subtítulo">
+                  <i class="fa-solid fa-heading" aria-hidden="true"></i> <strong>H2</strong>
+                </button>
+                <button type="button" (click)="insertPostFormat('list')" title="Insertar lista">
+                  <i class="fa-solid fa-list-ul" aria-hidden="true"></i> Lista
+                </button>
+                <button type="button" (click)="insertPostFormat('quote')" title="Insertar cita">
+                  <i class="fa-solid fa-quote-left" aria-hidden="true"></i> Cita
+                </button>
+              </div>
+              <div class="bo-form-grid-2">
+                <div>
+                  <label class="bo-field-label" for="news-content-es">Cuerpo Completo de la Noticia (Español)</label>
+                  <textarea id="news-content-es" rows="6" class="bo-input" [(ngModel)]="postForm.content" name="pContentEs"></textarea>
+                </div>
+                <div>
+                  <label class="bo-field-label" for="news-content-en">Full Article Body (English)</label>
+                  <textarea id="news-content-en" rows="6" class="bo-input" [(ngModel)]="postForm.contentEn" name="pContentEn"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="bo-media-box" style="margin-top: 1.25rem">
+              <span class="bo-field-label">
+                <i class="fa-solid fa-image" aria-hidden="true"></i> IMAGEN DESTACADA DE LA NOTA DE INTERÉS
+              </span>
+              @if (postForm.imageUrl) {
+                <img [src]="postForm.imageUrl" alt="Portada de la noticia" class="bo-media-preview-lg" />
+              }
+              <input
+                type="url"
+                class="bo-input"
+                [(ngModel)]="postForm.imageUrl"
+                name="pImg"
+                placeholder="URL de la imagen (https://...)"
+              />
+              <input type="file" accept="image/*" (change)="onPostImageChange($event)" />
+            </div>
+
+            <div class="bo-form-footer">
+              <button type="button" class="bo-btn-secondary" (click)="resetPostForm()">Cancelar</button>
+              <button type="submit" class="bo-btn-save">
+                <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>
+                {{ editingPostId ? 'Guardar Cambios de la Noticia' : 'Publicar Nota de Interés' }}
+              </button>
+            </div>
+          </form>
+        </section>
+      }
+
+      <section class="bo-section-card">
+        <h2 class="bo-section-title">
+          <span><i class="fa-solid fa-newspaper" aria-hidden="true"></i> LISTADO DE NOTAS DE INTERÉS Y NOTICIAS ({{ posts().length }})</span>
+        </h2>
+        <div class="bo-table-wrap">
+          <table class="bo-table">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Título de la Nota</th>
+                <th scope="col">Autor / Categoría</th>
+                <th scope="col">Fecha Publicación</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (post of posts(); track post.postId || post.id) {
+                @let pId = post.postId || post.id || 0;
+                <tr>
+                  <td class="tabular-nums"><strong>#{{ pId }}</strong></td>
+                  <td>
+                    <strong>{{ post.title }}</strong>
+                    <br />
+                    <small>{{ post.summary }}</small>
+                  </td>
+                  <td>{{ post.authorName }}</td>
+                  <td class="tabular-nums">{{ post.publishedAt | date: 'mediumDate' }}</td>
+                  <td>
+                    <label class="bo-switch">
+                      <input
+                        type="checkbox"
+                        [checked]="post.isActive !== false"
+                        (change)="togglePostActive(post)"
+                      />
+                      <span class="bo-slider"></span>
+                    </label>
+                  </td>
+                  <td>
+                    <div class="bo-actions">
+                      <button
+                        type="button"
+                        class="bo-action-btn"
+                        title="Editar Nota de Interés"
+                        (click)="startEditPost(post)"
+                      >
+                        <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="bo-action-btn delete"
+                        title="Eliminar Nota de Interés"
+                        (click)="confirmDeletePost.set(post)"
+                      >
+                        <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+
+    <!-- ===================================================================== -->
+    <!-- SECCIÓN 4: EDITOR PÁGINA DE INICIO (CMS HOME)                         -->
+    <!-- ===================================================================== -->
+    @if (activeTab() === 'CMS_HOME') {
+      <form (ngSubmit)="saveHomeCms()">
+        <section class="bo-section-card">
+          <h2 class="bo-section-title">
+            <span><i class="fa-solid fa-panorama" aria-hidden="true"></i> SECCIÓN PRINCIPAL (HERO BANNER)</span>
+          </h2>
+          <div class="bo-form-grid-2">
+            <div>
+              <label class="bo-field-label" for="cms-hero-title-es">
+                <i class="fa-solid fa-heading" aria-hidden="true"></i> Título Principal (Español)
+              </label>
+              <input id="cms-hero-title-es" type="text" class="bo-input" [(ngModel)]="homeCmsForm.heroTitleEs" name="hTitleEs" />
+            </div>
+            <div>
+              <label class="bo-field-label" for="cms-hero-title-en">
+                <i class="fa-solid fa-language" aria-hidden="true"></i> Main Hero Title (English)
+              </label>
+              <input id="cms-hero-title-en" type="text" class="bo-input" [(ngModel)]="homeCmsForm.heroTitleEn" name="hTitleEn" />
+            </div>
+          </div>
+
+          <div class="bo-form-grid-2">
+            <div>
+              <label class="bo-field-label" for="cms-hero-sub-es">
+                <i class="fa-solid fa-align-left" aria-hidden="true"></i> Descripción Hero (Español)
+              </label>
+              <textarea id="cms-hero-sub-es" rows="2" class="bo-input" [(ngModel)]="homeCmsForm.heroSubtitleEs" name="hSubEs"></textarea>
+            </div>
+            <div>
+              <label class="bo-field-label" for="cms-hero-sub-en">
+                <i class="fa-solid fa-language" aria-hidden="true"></i> Hero Subtitle (English)
+              </label>
+              <textarea id="cms-hero-sub-en" rows="2" class="bo-input" [(ngModel)]="homeCmsForm.heroSubtitleEn" name="hSubEn"></textarea>
+            </div>
+          </div>
+
+          <div class="bo-media-box" style="margin-top: 1rem">
+            <span class="bo-field-label">
+              <i class="fa-solid fa-image" aria-hidden="true"></i> IMAGEN MULTIMEDIA DEL HERO PRINCIPAL
+            </span>
+            @if (homeCmsForm.heroBannerUrl) {
+              <img [src]="homeCmsForm.heroBannerUrl" alt="Hero Banner" class="bo-media-preview-lg" />
+            }
+            <input id="cms-hero-banner" type="url" class="bo-input" [(ngModel)]="homeCmsForm.heroBannerUrl" name="hBanner" />
+          </div>
+        </section>
+
+        <section class="bo-section-card">
+          <h2 class="bo-section-title">
+            <span><i class="fa-solid fa-address-card" aria-hidden="true"></i> ENCABEZADOS Y DATOS DE CONTACTO INSTITUCIONAL</span>
+          </h2>
+          <div class="bo-form-grid-2">
+            <div>
+              <label class="bo-field-label" for="cms-feat-es">
+                <i class="fa-solid fa-star" aria-hidden="true"></i> Título Sección Restaurantes Destacados (ES)
+              </label>
+              <input id="cms-feat-es" type="text" class="bo-input" [(ngModel)]="homeCmsForm.featuredTitleEs" name="fTitleEs" />
+            </div>
+            <div>
+              <label class="bo-field-label" for="cms-feat-en">
+                <i class="fa-solid fa-language" aria-hidden="true"></i> Featured Section Title (EN)
+              </label>
+              <input id="cms-feat-en" type="text" class="bo-input" [(ngModel)]="homeCmsForm.featuredTitleEn" name="fTitleEn" />
+            </div>
+          </div>
+
+          <div class="bo-form-grid-3">
+            <div>
+              <label class="bo-field-label" for="cms-email">
+                <i class="fa-solid fa-envelope" aria-hidden="true"></i> Correo Institucional
+              </label>
+              <input id="cms-email" type="email" class="bo-input" [(ngModel)]="homeCmsForm.contactEmail" name="cEmail" />
+            </div>
+            <div>
+              <label class="bo-field-label" for="cms-phone">
+                <i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Línea / WhatsApp Oficial
+              </label>
+              <input id="cms-phone" type="text" class="bo-input" [(ngModel)]="homeCmsForm.contactPhone" name="cPhone" />
+            </div>
+            <div>
+              <label class="bo-field-label" for="cms-addr">
+                <i class="fa-solid fa-location-dot" aria-hidden="true"></i> Dirección Sede Central
+              </label>
+              <input id="cms-addr" type="text" class="bo-input" [(ngModel)]="homeCmsForm.contactAddress" name="cAddr" />
+            </div>
+          </div>
+
+          <div class="bo-form-footer">
+            <button type="submit" class="bo-btn-save">
+              <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Guardar Cambios de Página de Inicio
+            </button>
+          </div>
+        </section>
+      </form>
+    }
+  </div>
+</div>
+
+<!-- Modal de Confirmación para Eliminar Restaurante -->
+@if (confirmDeleteBusiness(); as bizToDelete) {
+  <div class="unal-modal-backdrop" role="dialog" aria-modal="true">
+    <div class="unal-modal-card">
+      <div class="unal-modal-icon">
+        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+      </div>
+      <h3>¿Eliminar restaurante del directorio?</h3>
+      <p>
+        Estás a punto de eliminar <strong>{{ bizToDelete.name }}</strong>. Esta acción retirará su ficha del portal público.
+      </p>
+      <div class="unal-modal-actions">
+        <button type="button" class="bo-btn-secondary" (click)="confirmDeleteBusiness.set(null)">
+          Cancelar
+        </button>
+        <button type="button" class="bo-btn-danger" (click)="deleteBusiness(bizToDelete)">
+          <i class="fa-solid fa-trash-can" aria-hidden="true"></i> Sí, eliminar restaurante
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal de Confirmación para Eliminar Nota de Interés -->
+@if (confirmDeletePost(); as postToDelete) {
+  <div class="unal-modal-backdrop" role="dialog" aria-modal="true">
+    <div class="unal-modal-card">
+      <div class="unal-modal-icon">
+        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+      </div>
+      <h3>¿Eliminar esta Nota de Interés?</h3>
+      <p>
+        Estás a punto de eliminar la publicación <strong>"{{ postToDelete.title }}"</strong>.
+      </p>
+      <div class="unal-modal-actions">
+        <button type="button" class="bo-btn-secondary" (click)="confirmDeletePost.set(null)">
+          Cancelar
+        </button>
+        <button type="button" class="bo-btn-danger" (click)="deletePost(postToDelete)">
+          <i class="fa-solid fa-trash-can" aria-hidden="true"></i> Sí, eliminar noticia
+        </button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,107 @@
+.forgot-row {
+  display: flex;
+  justify-content: flex-end;
+  margin: -0.5rem 0 0.85rem;
+}
+
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 0.25rem;
+  background: none;
+  border: none;
+  color: var(--knect-accent);
+  font-size: 0.86rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.link-btn:hover {
+  color: var(--knect-primary);
+}
+
+.back-btn {
+  margin-top: 0.75rem;
+}
+
+.demo-roles-box {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--knect-border);
+}
+
+.demo-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 36px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--knect-primary);
+  cursor: pointer;
+}
+
+.demo-label i {
+  color: var(--knect-accent);
+}
+
+.demo-hint {
+  font-size: 0.82rem;
+  color: var(--knect-text-muted);
+  margin: 0.25rem 0 0.75rem;
+}
+
+.demo-buttons {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+@media (min-width: 480px) {
+  .demo-buttons {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.btn-demo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  min-height: 46px;
+  padding: 0.6rem 0.4rem;
+  border: 1.5px solid var(--knect-border);
+  border-radius: 10px;
+  background: var(--knect-bg-card);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-demo:hover {
+  border-color: var(--knect-accent);
+  background: rgba(0, 163, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+.btn-demo strong {
+  font-size: 0.78rem;
+  color: var(--knect-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.btn-demo strong i {
+  color: var(--knect-accent);
+}
+
+.btn-demo small {
+  font-size: 0.7rem;
+  color: var(--knect-text-muted);
+}

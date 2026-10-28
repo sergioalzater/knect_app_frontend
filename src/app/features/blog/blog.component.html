@@ -1,0 +1,88 @@
+<section class="news-hero">
+  <div class="knect-container">
+    <nav class="unal-hero-breadcrumb" aria-label="Breadcrumb">
+      <i class="fa-solid fa-location-arrow" aria-hidden="true"></i>
+      <span>{{ i18n.lang() === 'es' ? 'Estás en:' : 'You are in:' }}</span>
+      <a routerLink="/">{{ i18n.t('nav.home') }}</a>
+      <span>/</span>
+      <span class="crumb-active">{{ i18n.t('news.title') }}</span>
+    </nav>
+    <h1>{{ i18n.t('news.title') }}</h1>
+    <p>{{ i18n.t('news.subtitle') }}</p>
+  </div>
+</section>
+
+<section class="news-body-section">
+  <div class="knect-container">
+    @if (isLoading()) {
+      <div class="articles-grid" aria-busy="true" aria-label="Cargando noticias">
+        @for (item of [1, 2, 3, 4]; track item) {
+          <div class="skeleton-card">
+            <div class="skeleton skeleton-banner"></div>
+            <div class="skeleton-body">
+              <div class="skeleton skeleton-line sm"></div>
+              <div class="skeleton skeleton-title"></div>
+              <div class="skeleton skeleton-line lg"></div>
+              <div class="skeleton skeleton-line md"></div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else if (selectedPost(); as article) {
+      <article class="knect-card-white article-detail">
+        <div class="article-top-bar">
+          <a routerLink="/blog" class="btn-knect btn-knect-outline">
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+            <span>{{ i18n.t('news.backToList') }}</span>
+          </a>
+          <span class="article-meta">
+            <i class="fa-regular fa-calendar" aria-hidden="true"></i>
+            <time [attr.datetime]="article.publishedAt">{{ article.publishedAt | date: 'fullDate' }}</time>
+            &bull;
+            <i class="fa-solid fa-pen-nib" aria-hidden="true"></i>
+            {{ article.authorName || 'Editorial Knect' }}
+          </span>
+        </div>
+
+        <h1 class="article-title">
+          {{ i18n.lang() === 'es' ? article.title : (article.titleEn || article.title) }}
+        </h1>
+
+        <p class="article-lead">
+          {{ i18n.lang() === 'es' ? article.summary : (article.summaryEn || article.summary) }}
+        </p>
+
+        <img
+          [src]="article.imageUrl || 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1200&q=80'"
+          [alt]="i18n.lang() === 'es' ? article.title : (article.titleEn || article.title)"
+          class="article-hero-image"
+        />
+
+        <div class="article-paragraphs">
+          @for (p of paragraphs(i18n.lang() === 'es' ? article.content : (article.contentEn || article.content)); track p) {
+            <p>{{ p }}</p>
+          }
+        </div>
+      </article>
+    } @else {
+      <div class="notes-section-intro">
+        <h2 class="notes-heading">
+          <i class="fa-solid fa-newspaper" aria-hidden="true"></i>
+          {{ i18n.lang() === 'es' ? 'Publicaciones y Notas de Interés' : 'Publications & Notes of Interest' }}
+        </h2>
+      </div>
+
+      <div class="articles-grid">
+        @for (post of pagedPosts(); track post.slug) {
+          <app-news-card [post]="post" />
+        }
+      </div>
+
+      <app-pagination-bar
+        [currentPage]="currentPage()"
+        [totalPages]="totalPages()"
+        (pageChange)="currentPage.set($event)"
+      />
+    }
+  </div>
+</section>

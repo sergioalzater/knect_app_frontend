@@ -1,0 +1,50 @@
+<footer class="unal-footer">
+  <div class="knect-container footer-grid">
+    <div class="footer-brand">
+      <div class="footer-logo-row">
+        <img src="/logo-knect.svg" alt="" class="footer-logo" width="48" height="48" />
+        <div>
+          <h3>Knect</h3>
+          <p>{{ i18n.lang() === 'es' ? 'Directorio Comercial y Gastronómico de la Ciudad' : 'City Commercial & Dining Directory' }}</p>
+        </div>
+      </div>
+      <p class="footer-desc">
+        {{
+          i18n.lang() === 'es'
+            ? 'Plataforma para descubrir y calificar restaurantes, cocinas ocultas y locales comerciales con geolocalización interactiva y contacto directo.'
+            : 'Platform to discover and rate restaurants, dark kitchens, and local shops with interactive geolocation and direct contact.'
+        }}
+      </p>
+    </div>
+
+    <nav class="footer-links" [attr.aria-label]="i18n.lang() === 'es' ? 'Navegación del pie de página' : 'Footer navigation'">
+      <h4><i class="fa-solid fa-compass" aria-hidden="true"></i> {{ i18n.lang() === 'es' ? 'Secciones del Portal' : 'Portal Sections' }}</h4>
+      <a routerLink="/"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> {{ i18n.t('nav.home') }}</a>
+      <a routerLink="/businesses"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> {{ i18n.lang() === 'es' ? 'Restaurantes y Locales' : 'Restaurants & Places' }}</a>
+      <a routerLink="/blog"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> {{ i18n.lang() === 'es' ? 'Notas de Interés / Noticias' : 'News & Notes' }}</a>
+    </nav>
+
+    <nav class="footer-links" [attr.aria-label]="i18n.lang() === 'es' ? 'Cuenta y administración' : 'Account and administration'">
+      <h4><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> {{ i18n.lang() === 'es' ? 'Acceso y Gestión' : 'Access & Management' }}</h4>
+      @if (authService.isLoggedIn()) {
+        <a routerLink="/dashboard"><i class="fa-solid fa-user-gear" aria-hidden="true"></i> {{ i18n.lang() === 'es' ? 'Mi Cuenta y Perfil' : 'My Account & Profile' }}</a>
+        @if (authService.isBusinessAdmin()) {
+          <a routerLink="/brand-admin"><i class="fa-solid fa-building-user" aria-hidden="true"></i> {{ i18n.lang() === 'es' ? 'BackOffice Mi Restaurante' : 'My Restaurant BackOffice' }}</a>
+        }
+        @if (authService.isSuperAdmin()) {
+          <a routerLink="/super-admin"><i class="fa-solid fa-gauge-high" aria-hidden="true"></i> {{ i18n.lang() === 'es' ? 'BackOffice SuperAdmin' : 'SuperAdmin BackOffice' }}</a>
+        }
+      } @else {
+        <a routerLink="/auth/login"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> {{ i18n.t('nav.login') }}</a>
+        <a routerLink="/auth/register"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> {{ i18n.t('nav.register') }}</a>
+      }
+    </nav>
+  </div>
+
+  <div class="footer-bottom-bar">
+    <div class="knect-container footer-bottom-inner">
+      <span><i class="fa-regular fa-copyright" aria-hidden="true"></i> KNECT 2026 &mdash; {{ i18n.t('footer.rights') }}</span>
+      <span class="footer-support"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> DIRECTORIO COMERCIAL &bull; MANIZALES</span>
+    </div>
+  </div>
+</footer>
